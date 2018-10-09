@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "715143800429",
+    "firebase_url": "https://worldoffoodrecipes.firebaseio.com",
+    "project_id": "worldoffoodrecipes",
+    "storage_bucket": "worldoffoodrecipes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715143800429:android:ad87c2736250d294",
+        "android_client_info": {
+          "package_name": "com.example.alex.worldoffoodrecipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715143800429-drrvk6r7qjgn9hi8ig6mcvqch655bd6b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alex.worldoffoodrecipes",
+            "certificate_hash": "90330ddf45d1f7e9fb4d0766eb2dc47a5edeff6f"
+          }
+        },
+        {
+          "client_id": "715143800429-1ll6sa8i7raadthq2gr5gk1k81dt65rk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNdqK9px43YRnBabUZBgLohIBpGJluU9w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715143800429-1ll6sa8i7raadthq2gr5gk1k81dt65rk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,17 +3,16 @@ package com.example.alex.worldoffoodrecipes;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
-
+import android.view.View;
+import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
-    FirebaseAuth mAuth;
-    TextView mTV;
+    private FirebaseAuth mAuth;
+
+    private Button myRec;
+    private Button allRec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,16 +20,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        mTV = (TextView) findViewById(R.id.tv_alert);
 
-        FirebaseUser user = mAuth.getCurrentUser();
+        myRec = (Button) findViewById(R.id.myRecipes);
+        allRec = (Button) findViewById(R.id.allRecipes);
 
-        if(user == null){
-            Intent register = new Intent(MainActivity.this,LoginActivity.class);
-            startActivity(register);
-        }else {
-            mTV.setText("User is authenticated");
-        }
+        myRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToMyRecipes   = new Intent(MainActivity.this, myRecipesActivity.class);
+                startActivity(goToMyRecipes);
+            }
+        });
+
+        allRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToAllRecipes = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(goToAllRecipes);
+            }
+        });
+
     }
 
 }

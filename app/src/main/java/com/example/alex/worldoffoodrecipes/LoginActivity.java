@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                     mProgressDialog.show();
                     loginUser(email, password);
                 }else {
-                    Toast.makeText(LoginActivity.this, "Some fields are empty!", Toast.LENGTH_SHORT);
+                    Toast.makeText(LoginActivity.this, "Some fields are empty!", Toast.LENGTH_LONG);
                 }
             }
 
@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                         }else {
                             mProgressDialog.hide();
-                            Toast.makeText(LoginActivity.this, "Error logging in!", Toast.LENGTH_SHORT);
+                            Toast.makeText(LoginActivity.this, "Error logging in!", Toast.LENGTH_LONG);
                         }
                     }
                 });

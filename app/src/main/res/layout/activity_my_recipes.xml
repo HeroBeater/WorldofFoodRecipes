@@ -1,17 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".myRecipesActivity">
-
-    <ListView
-        android:id="@+id/ListView"
-        android:layout_width="fill_parent"
+    tools:context="com.example.alex.worldoffoodrecipes.myRecipesActivity">
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/common_google_signin_btn_text_light_default"
-        android:dividerHeight="2dp"
-        android:footerDividersEnabled="false"/>
+        android:hint="enter Name"
+        android:id="@+id/edittext"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn"
+        android:text="add Data"
+        />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"/>
 </LinearLayout>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.alex.worldoffoodrecipes.myRecipesActivity">
+    tools:context=".myRecipesActivity">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,8 +16,10 @@
         android:id="@+id/btn"
         android:text="add Data"
         />
-    <ListView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"/>
+        android:layout_height="match_parent"
+        android:clipChildren="false"/>
 </LinearLayout>

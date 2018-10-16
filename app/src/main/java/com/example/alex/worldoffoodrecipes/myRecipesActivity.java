@@ -1,47 +1,48 @@
 package com.example.alex.worldoffoodrecipes;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class myRecipesActivity extends AppCompatActivity {
 
-    Button button;
-    EditText editText;
-    ListView listView;
-    private List<String> namesList = new ArrayList<>();
+    private Button button;
+    private EditText editText;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private Recipe recipe1;
+    private Recipe recipe2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipes);
+        recyclerView = findViewById(R.id.recyclerView);
 
         button = findViewById(R.id.btn);
         editText = (EditText) findViewById(R.id.edittext);
-        listView = (ListView) findViewById(R.id.listView);
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        //add Data
+        recipe1 = new Recipe("Hunger!!!!!", "BlaBlaBla", "more BlaBlaBla");
+        recipe2 = new Recipe("Hunger more !!!!!", "BlaBlaBla", "more BlaBlaBla");
+
+        Recipe[] recipes = {recipe1, recipe2};
+        mAdapter = new RecipeAdapter(recipes);
+        recyclerView.setAdapter(mAdapter);
+
+
+
+
+
+        /*//add Data
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +78,7 @@ public class myRecipesActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
             }
-        });
+        });*/
 
     }
 }

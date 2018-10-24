@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public static final String md5(final String s) {
+    public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash

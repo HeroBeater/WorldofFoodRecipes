@@ -27,8 +27,6 @@ public class myRecipesActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private FloatingActionButton FAB;
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -59,7 +57,7 @@ public class myRecipesActivity extends AppCompatActivity {
             }
         });
 
-        FAB = findViewById(R.id.floating_action_button);
+        FloatingActionButton FAB = findViewById(R.id.floating_action_button);
 
         FAB.setOnClickListener(new View.OnClickListener() {
             @Override

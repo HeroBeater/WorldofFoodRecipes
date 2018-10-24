@@ -26,7 +26,6 @@ import java.util.HashMap;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText mDisplayName, mPassword, mPasswordRe, mEmail, mEmailRe;
-    private Button mBtn;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ProgressDialog mProgressDialog;
@@ -42,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailRe = findViewById(R.id.reg_email_re);
         mPassword = findViewById(R.id.reg_password);
         mPasswordRe = findViewById(R.id.reg_password_re);
-        mBtn = findViewById(R.id.reg_btn);
+        Button mBtn = findViewById(R.id.reg_btn);
 
         db = FirebaseFirestore.getInstance();
 
@@ -111,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public static final String md5(final String s) {
+    public static String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash

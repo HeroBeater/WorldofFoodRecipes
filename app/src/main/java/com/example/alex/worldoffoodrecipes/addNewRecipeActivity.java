@@ -3,7 +3,6 @@ package com.example.alex.worldoffoodrecipes;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -17,9 +16,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -29,7 +31,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class addNewRecipeActivity extends AppCompatActivity {
 
@@ -52,7 +53,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
         title = findViewById(R.id.editTextOfTitleOfRecipe);
         summary = findViewById(R.id.editTextOfSum);
         description = findViewById(R.id.editTextOfDesc);
-        TextView userField = findViewById(R.id.textViewUser);
+        final TextView userField = findViewById(R.id.textViewUser);
         Button addButton = findViewById(R.id.buttonAddNewRecipe);
         Button imageButton = findViewById(R.id.buttonImage);
         Button videoButton = findViewById(R.id.buttonVideo);
@@ -65,7 +66,20 @@ public class addNewRecipeActivity extends AppCompatActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        userField.setText(mAuth.getCurrentUser().getEmail());
+        db.collection("Users").document(mAuth.getCurrentUser().getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task< DocumentSnapshot > task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    userField.setText(doc.get("Name").toString());
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {}
+                });
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +111,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Recipe saved", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(addNewRecipeActivity.this, myRecipesActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

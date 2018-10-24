@@ -14,19 +14,20 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            tools:ignore="WebViewLayout">
 
             <TextView
                 android:id="@+id/titleOfRecipe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="104dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="8dp"
                 android:text="@string/title_of_recipe"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.216"
+                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,19 +42,19 @@
                 android:inputType="text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/titleOfRecipe" />
+                app:layout_constraintTop_toBottomOf="@+id/titleOfRecipe"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/summary"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.471"
+                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextOfTitleOfRecipe" />
 
@@ -61,13 +62,10 @@
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="160dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/description"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextOfSum" />
 
@@ -82,7 +80,9 @@
                 android:inputType="textMultiLine"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/summary" />
+                app:layout_constraintTop_toBottomOf="@+id/summary"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
             <EditText
                 android:id="@+id/editTextOfDesc"
@@ -96,7 +96,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description" />
+                app:layout_constraintTop_toBottomOf="@+id/description"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
             <Switch
                 android:id="@+id/switchPublic"
@@ -108,7 +110,8 @@
                 android:text="Share with Public"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextOfDesc" />
+                app:layout_constraintTop_toBottomOf="@+id/editTextOfDesc"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/textViewAddImage"
@@ -118,7 +121,8 @@
                 android:text="Add image?"
                 app:layout_constraintBottom_toBottomOf="@+id/buttonImage"
                 app:layout_constraintEnd_toStartOf="@+id/buttonImage"
-                app:layout_constraintTop_toTopOf="@+id/buttonImage" />
+                app:layout_constraintTop_toTopOf="@+id/buttonImage"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/buttonImage"
@@ -128,7 +132,8 @@
                 android:layout_marginEnd="8dp"
                 android:text="Choose..."
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchPublic" />
+                app:layout_constraintTop_toBottomOf="@+id/switchPublic"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/buttonAddNewRecipe"
@@ -149,7 +154,7 @@
                 android:text="@string/created_by"
                 app:layout_constraintBottom_toTopOf="@+id/buttonAddNewRecipe"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/webView2" />
+                app:layout_constraintTop_toBottomOf="@+id/videoView" />
 
             <TextView
                 android:id="@+id/textViewUser"
@@ -169,7 +174,8 @@
                 android:text="Add video?"
                 app:layout_constraintBottom_toBottomOf="@+id/buttonVideo"
                 app:layout_constraintEnd_toStartOf="@+id/buttonVideo"
-                app:layout_constraintTop_toTopOf="@+id/buttonVideo" />
+                app:layout_constraintTop_toTopOf="@+id/buttonVideo"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/buttonVideo"
@@ -179,7 +185,8 @@
                 android:layout_marginEnd="8dp"
                 android:text="Choose..."
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageRecipe" />
+                app:layout_constraintTop_toBottomOf="@+id/imageRecipe"
+                tools:ignore="HardcodedText" />
 
             <ImageView
                 android:id="@+id/imageRecipe"
@@ -191,12 +198,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/buttonImage"
-                tools:srcCompat="@tools:sample/avatars[3]" />
+                tools:srcCompat="@tools:sample/avatars[3]"
+                tools:ignore="ContentDescription" />
 
-            <WebView
-                android:id="@+id/webView2"
+            <VideoView
+                android:id="@+id/videoView"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"

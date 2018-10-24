@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHolder>{
-    private Recipe[] recipe_list;
+    private ArrayList<Recipe> recipe_list;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageView;
@@ -23,7 +25,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
         }
     }
 
-    public RecipeAdapter(Recipe[] recipes){
+    public RecipeAdapter(ArrayList<Recipe> recipes){
         recipe_list = recipes;
     }
 
@@ -38,7 +40,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     //replace contents of a view
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position){
-        Recipe recipe = recipe_list[position];
+        Recipe recipe = recipe_list.get(position);
         holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
         holder.textTitel.setText(recipe.getName());
         holder.textDesc.setText(recipe.getSummary());
@@ -47,6 +49,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     //size of list
     @Override
     public int getItemCount(){
-        return recipe_list.length;
+        return recipe_list.size();
     }
 }

@@ -16,6 +16,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputLayout mLoginEmail, mLoginPassword;
@@ -28,10 +31,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mLoginButton = (Button) findViewById(R.id.login_btn);
-        mNewAccount = (Button) findViewById(R.id.b_newAccount);
-        mLoginEmail = (TextInputLayout) findViewById(R.id.login_email);
-        mLoginPassword = (TextInputLayout) findViewById(R.id.login_password);
+        mLoginButton = findViewById(R.id.login_btn);
+        mNewAccount = findViewById(R.id.b_newAccount);
+        mLoginEmail = findViewById(R.id.login_email);
+        mLoginPassword = findViewById(R.id.login_password);
 
         mProgressDialog = new ProgressDialog(this);
 
@@ -56,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                     mProgressDialog.setMessage("Please wait");
                     mProgressDialog.setCanceledOnTouchOutside(true);
                     mProgressDialog.show();
-                    loginUser(email, password);
+                    loginUser(email, md5(password));
                 }else {
                     Toast.makeText(getApplicationContext(), "Some fields are empty!", Toast.LENGTH_SHORT).show();
                 }
@@ -79,6 +82,30 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    public static final String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

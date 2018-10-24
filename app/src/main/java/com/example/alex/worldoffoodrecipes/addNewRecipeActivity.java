@@ -3,6 +3,7 @@ package com.example.alex.worldoffoodrecipes;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,13 +34,11 @@ import java.util.UUID;
 public class addNewRecipeActivity extends AppCompatActivity {
 
     private EditText title, summary, description;
-    private TextView userField;
-    private Button addButton, imageButton, videoButton;
     private Switch switchPublic;
+    private ImageView imageRecipe;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private FirebaseStorage storage;
     private StorageReference storageReference;
 
     private Uri filePath;
@@ -49,19 +49,20 @@ public class addNewRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_recipe);
 
-        title = (EditText) findViewById(R.id.editTextOfTitleOfRecipe);
-        summary = (EditText) findViewById(R.id.editTextOfSum);
-        description = (EditText) findViewById(R.id.editTextOfDesc);
-        userField = (TextView) findViewById(R.id.textViewUser);
-        addButton = (Button) findViewById(R.id.buttonAddNewRecipe);
-        imageButton = (Button) findViewById(R.id.buttonImage);
-        videoButton = (Button) findViewById(R.id.buttonVideo);
-        switchPublic = (Switch) findViewById(R.id.switchPublic);
+        title = findViewById(R.id.editTextOfTitleOfRecipe);
+        summary = findViewById(R.id.editTextOfSum);
+        description = findViewById(R.id.editTextOfDesc);
+        TextView userField = findViewById(R.id.textViewUser);
+        Button addButton = findViewById(R.id.buttonAddNewRecipe);
+        Button imageButton = findViewById(R.id.buttonImage);
+        Button videoButton = findViewById(R.id.buttonVideo);
+        imageRecipe = findViewById(R.id.imageRecipe);
+        switchPublic = findViewById(R.id.switchPublic);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        storage = FirebaseStorage.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
         userField.setText(mAuth.getCurrentUser().getEmail());
@@ -70,7 +71,6 @@ public class addNewRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chooseImage();
-                uploadImage();
             }
         });
 
@@ -88,10 +88,12 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     map.put("Public",false);
                 }
 
+                final String pathName = mAuth.getCurrentUser().getUid()+title.getText().toString();
                 db.collection("All Recipes").document().set(map)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                uploadImage(pathName);
                                 Toast.makeText(getApplicationContext(), "Recipe saved", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(addNewRecipeActivity.this, myRecipesActivity.class);
                                 startActivity(intent);
@@ -121,10 +123,19 @@ public class addNewRecipeActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null )
         {
             filePath = data.getData();
+            Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                imageRecipe.setImageBitmap(bitmap);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void uploadImage() {
+    private void uploadImage(String RecipeID) {
 
         if(filePath != null)
         {
@@ -132,7 +143,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
+            StorageReference ref = storageReference.child("images/"+ RecipeID);
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -157,4 +168,5 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     });
         }
     }
+
 }

@@ -1,17 +1,17 @@
 package com.example.alex.worldoffoodrecipes;
 
-import android.support.annotation.NonNull;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,63 +19,53 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class myRecipesActivity extends AppCompatActivity {
 
-    Button button;
-    EditText editText;
-    ListView listView;
-    private List<String> namesList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private FloatingActionButton FAB;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipes);
+        recyclerView = findViewById(R.id.recyclerView);
 
-        button = findViewById(R.id.btn);
-        editText = (EditText) findViewById(R.id.edittext);
-        listView = (ListView) findViewById(R.id.listView);
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        //add Data
-
-        button.setOnClickListener(new View.OnClickListener() {
+        db.collection("All Recipes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onClick(View v) {
-                Map<String, String> map = new HashMap<>();
-                map.put("name", editText.getText().toString());
-                db.collection("Recipe Name").document().set(map)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(getApplicationContext(), "Data saved", Toast.LENGTH_SHORT).show();
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                ArrayList<Recipe> recipes_list = new ArrayList<>();
+                for (DocumentSnapshot snapshot : documentSnapshots){
+                    if (snapshot.getString("Author").equals(mAuth.getCurrentUser().getUid())){
+                        recipes_list.add(new Recipe(snapshot.getString("Title"),
+                                snapshot.getString("Summary"),snapshot.getString("Description")));
                     }
-                })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(), "Data NOT saved", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                }
+                mAdapter = new RecipeAdapter(recipes_list);
+                recyclerView.setAdapter(mAdapter);
             }
         });
 
-        // retrieve Data
+        FAB = findViewById(R.id.floating_action_button);
 
-        db.collection("Recipe Name").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        FAB.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                namesList.clear();
-                for (DocumentSnapshot snapshot : documentSnapshots){
-                    namesList.add(snapshot.getString("name"));
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_selectable_list_item,namesList);
-                adapter.notifyDataSetChanged();
-                listView.setAdapter(adapter);
+            public void onClick(View v) {
+                Intent intent = new Intent(myRecipesActivity.this,addNewRecipeActivity.class);
+                startActivity(intent);
             }
         });
 

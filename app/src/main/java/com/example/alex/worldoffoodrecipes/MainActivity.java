@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         allRec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToAllRecipes = new Intent(MainActivity.this, LoginActivity.class);
+                Intent goToAllRecipes = new Intent(MainActivity.this, AllRecipesActivity.class);
                 startActivity(goToAllRecipes);
             }
         });

@@ -30,7 +30,8 @@
             android:name=".RegisterActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".myRecipesActivity" />
-        <activity android:name=".addNewRecipeActivity"></activity>
+        <activity android:name=".addNewRecipeActivity" />
+        <activity android:name=".AllRecipesActivity"></activity>
     </application>
 
 </manifest>

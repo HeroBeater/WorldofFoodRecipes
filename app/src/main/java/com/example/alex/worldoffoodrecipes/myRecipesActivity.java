@@ -52,7 +52,7 @@ public class myRecipesActivity extends AppCompatActivity {
                                 snapshot.getString("Summary"),snapshot.getString("Description")));
                     }
                 }
-                mAdapter = new RecipeAdapter(recipes_list);
+                mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);
                 recyclerView.setAdapter(mAdapter);
             }
         });

@@ -97,9 +97,9 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 map.put("Description", description.getText().toString());
                 map.put("Author",mAuth.getCurrentUser().getUid());
                 if (switchPublic.isChecked()){
-                    map.put("Public",true);
+                    map.put("Public","yes");
                 }else{
-                    map.put("Public",false);
+                    map.put("Public","no");
                 }
 
                 final String pathName = mAuth.getCurrentUser().getUid()+title.getText().toString();

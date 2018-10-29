@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/myRecipes"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:text="My Recipes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/allRecipes"
-        tools:ignore="HardcodedText" />
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/app_bar">
+    </include>
 
-    <Button
-        android:id="@+id/allRecipes"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:text="All Recipes"
-        app:layout_constraintBottom_toTopOf="@+id/myRecipes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center_vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/myRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Recipes"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/allRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All Recipes"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</LinearLayout>

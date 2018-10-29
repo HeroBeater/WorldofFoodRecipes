@@ -13,7 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class RecipeShowActivity extends AppCompatActivity {
 
-    private TextView textTitel, textSum, textDesc;
+    private TextView textTitle, textSum, textDesc;
     private ImageView imageRecipe;
 
     private FirebaseFirestore db;
@@ -23,7 +23,7 @@ public class RecipeShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_show);
 
-        textTitel = findViewById(R.id.titleOfRecipe);
+        textTitle = findViewById(R.id.titleOfRecipe);
         textSum = findViewById(R.id.summaryOfRecipe);
         textDesc = findViewById(R.id.descriptionOfRecipe);
         imageRecipe = findViewById(R.id.mainImageRecipe);
@@ -43,7 +43,7 @@ public class RecipeShowActivity extends AppCompatActivity {
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 for (DocumentSnapshot snapshot : documentSnapshots){
                     if (snapshot.getString("Title").equals(recipe_from_intent)){
-                        textTitel.setText(snapshot.getString("Title"));
+                        textTitle.setText(snapshot.getString("Title"));
                         textSum.setText(snapshot.getString("Summary"));
                         textDesc.setText(snapshot.getString("Description"));
                     }

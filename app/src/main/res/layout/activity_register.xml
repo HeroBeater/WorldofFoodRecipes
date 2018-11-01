@@ -126,7 +126,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="32dp"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary"
                 android:text="@string/create_account"
                 android:textColor="@android:color/white"
                 app:layout_constraintRight_toRightOf="parent"

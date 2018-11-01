@@ -3,13 +3,18 @@ package com.example.alex.worldoffoodrecipes;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,7 +26,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputLayout mLoginEmail, mLoginPassword;
+    private AutoCompleteTextView mLoginEmail;
+    private EditText mLoginPassword;
     private Button mLoginButton, mNewAccount;
     private ProgressDialog mProgressDialog;
     private FirebaseAuth mAuth;
@@ -33,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton = findViewById(R.id.login_btn);
         mNewAccount = findViewById(R.id.b_newAccount);
-        mLoginEmail = findViewById(R.id.login_email);
-        mLoginPassword = findViewById(R.id.login_password);
+        mLoginEmail = findViewById(R.id.email);
+        mLoginPassword = findViewById(R.id.password);
 
         mProgressDialog = new ProgressDialog(this);
 
@@ -51,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mLoginEmail.getEditText().getText().toString();
-                String password = mLoginPassword.getEditText().getText().toString();
+                String email = mLoginEmail.getText().toString();
+                String password = mLoginPassword.getText().toString();
 
                 if(!TextUtils.isEmpty(email)&&!TextUtils.isEmpty(password)){
                     mProgressDialog.setTitle("Logging In");

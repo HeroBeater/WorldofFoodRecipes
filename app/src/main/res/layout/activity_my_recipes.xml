@@ -6,27 +6,31 @@
     android:orientation="vertical"
     tools:context=".myRecipesActivity">
 
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/app_bar">
+    </include>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="false"/>
+        android:layout_height="0dp"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_action_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:scaleType="center"
-        android:src="@drawable/ic_launcher_foreground"
-        app:borderWidth="1dp"
-        app:elevation="10dp"
+        android:src="@drawable/ic_add_white_24dp"
+        app:backgroundTint="@android:color/holo_purple"
+        app:fabSize="normal"
         app:layout_anchor="@id/recyclerView"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_behavior="com.dev2qa.example.material_design.floatingactionbutton.FloatingActionButtonScrollBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_gravity="bottom|end"/>
 
 </android.support.constraint.ConstraintLayout>

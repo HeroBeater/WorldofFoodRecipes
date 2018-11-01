@@ -23,5 +23,8 @@
     <string name="add_new_recipe">Add new Recipe</string>
     <string name="created_by">Created by </string>
     <string name="user">USER</string>
+    <string name="edit_recipe">Edit recipe</string>
+    <string name="add_to_favorite">Add to favorite</string>
+    <string name="search_title">Search_title</string>
 
 </resources>

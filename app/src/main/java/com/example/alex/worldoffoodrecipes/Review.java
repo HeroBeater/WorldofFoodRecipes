@@ -9,10 +9,10 @@ public class Review {
     private String usernameOfReview;
     private String titleOfReview;
     private String descriptionOfReview;
-    private Integer rating;
+    private Float rating;
     private String timestamp;
 
-    public Review(String useernameOfReview, String titleOfReview, String descriptionOfReview, Integer rating) {
+    public Review(String useernameOfReview, String titleOfReview, String descriptionOfReview, Float rating) {
         this.usernameOfReview = useernameOfReview;
         this.titleOfReview = titleOfReview;
         this.descriptionOfReview = descriptionOfReview;
@@ -44,11 +44,11 @@ public class Review {
         this.descriptionOfReview = descriptionOfReview;
     }
 
-    public Integer getRating() {
+    public Float getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Float rating) {
         this.rating = rating;
     }
 

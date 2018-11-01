@@ -10,9 +10,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AllRecipesActivity extends AppCompatActivity {
 
@@ -30,13 +32,13 @@ public class AllRecipesActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("All Recipes").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("All Recipes").orderBy("Average_rating", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 ArrayList<Recipe> recipes_list = new ArrayList<>();
                 Log.d("allRecipeActivity","query launched");
                 for (DocumentSnapshot snapshot : documentSnapshots){
-                    if (snapshot.getString("Public").equals("yes")){
+                    if (Objects.equals(snapshot.getString("Public"), "yes")){
                         Log.d("allRecipeActivity","query not launched");
                         recipes_list.add(new Recipe(snapshot.getString("Title"),
                                 snapshot.getString("Summary"),snapshot.getString("Description")));

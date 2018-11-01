@@ -26,12 +26,13 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:text="@string/title_of_recipe"
+            android:text="Title of review"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
         <EditText
             android:id="@+id/editTextOfTitleOfReview"
@@ -46,7 +47,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleOfReview" />
+            app:layout_constraintTop_toBottomOf="@+id/titleOfReview"
+            tools:ignore="LabelFor" />
 
         <TextView
             android:id="@+id/description"
@@ -87,7 +89,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewCreatedBy" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewCreatedBy"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/textViewCreatedBy"
@@ -125,7 +128,8 @@
             android:text="Rate the recipe:"
             app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ratingBar" />
+            app:layout_constraintTop_toTopOf="@+id/ratingBar"
+            tools:ignore="HardcodedText" />
 
 
     </android.support.constraint.ConstraintLayout>

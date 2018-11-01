@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,9 +19,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RecipeShowActivity extends AppCompatActivity {
 
@@ -28,6 +31,8 @@ public class RecipeShowActivity extends AppCompatActivity {
     private ImageView imageRecipe;
     private RatingBar ratingBar;
     private Button addReview;
+
+    private String recipe_ID_intent;
 
     private RecyclerView recyclerViewReview;
     private RecyclerView.Adapter mAdapter;
@@ -56,38 +61,37 @@ public class RecipeShowActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        final String recipe_from_intent;
-
-        if(getIntent().hasExtra("recipe_name")){
-            recipe_from_intent = getIntent().getStringExtra("recipe_name");
-        }else{
-            recipe_from_intent = "error recipe";
-        }
-
         db.collection("All Recipes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 for (DocumentSnapshot snapshot : documentSnapshots){
-                    if (snapshot.getString("Title").equals(recipe_from_intent)){
+                    if (Objects.equals(snapshot.getString("Title"), getIntent().getStringExtra("recipe_name"))){
+                        String recipe_ID = snapshot.getString("Recipe_ID");
+                        recipe_ID_intent = recipe_ID;
+                        if(snapshot.getDouble("Number_of_reviews")!=0){
+                            db.collection("All Recipes").document(recipe_ID).update("Average_rating",
+                                    (float)(snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews")));
+                        }
                         textTitle.setText(snapshot.getString("Title"));
                         textSum.setText(snapshot.getString("Summary"));
                         textDesc.setText(snapshot.getString("Description"));
-                        ratingBar.setRating(snapshot.getLong("Average_rating").intValue());
+                        ratingBar.setRating(snapshot.getLong("Average_rating"));
+
+                        db.collection("All Recipes").document(recipe_ID).collection("Reviews").orderBy("Rating", Query.Direction.DESCENDING)
+                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                        ArrayList<Review> review_list = new ArrayList<>();
+                                        for (DocumentSnapshot snapshot : documentSnapshots){
+                                            review_list.add(new Review(snapshot.getString("Author_of_review"),snapshot.getString("Title"),
+                                                    snapshot.getString("Description"), Objects.requireNonNull(snapshot.getDouble("Rating")).floatValue()));
+                                        }
+                                        mAdapter = new ReviewAdapter(review_list,RecipeShowActivity.this);
+                                        recyclerViewReview.setAdapter(mAdapter);
+                                    }
+                                });
                     }
                 }
-            }
-        });
-
-        db.collection("All Reviews").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                ArrayList<Review> review_list = new ArrayList<>();
-                for (DocumentSnapshot snapshot : documentSnapshots){
-                    review_list.add(new Review(snapshot.getString("Author"),snapshot.getString("Title"),
-                            snapshot.getString("Description"),snapshot.getLong("Rating").intValue()));
-                }
-                mAdapter = new ReviewAdapter(review_list,RecipeShowActivity.this);
-                recyclerViewReview.setAdapter(mAdapter);
             }
         });
 
@@ -95,10 +99,9 @@ public class RecipeShowActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RecipeShowActivity.this, addReviewActivity.class);
+                intent.putExtra("ID", recipe_ID_intent);
                 startActivity(intent);
             }
         });
-
     }
-
 }

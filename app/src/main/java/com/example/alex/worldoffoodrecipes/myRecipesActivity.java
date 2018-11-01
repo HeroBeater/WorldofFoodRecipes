@@ -27,6 +27,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class myRecipesActivity extends AppCompatActivity {
 
@@ -61,7 +62,7 @@ public class myRecipesActivity extends AppCompatActivity {
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 ArrayList<Recipe> recipes_list = new ArrayList<>();
                 for (DocumentSnapshot snapshot : documentSnapshots){
-                    if (snapshot.getString("Author").equals(mAuth.getCurrentUser().getUid())){
+                    if (Objects.equals(snapshot.getString("Author_of_recipe"), Objects.requireNonNull(mAuth.getCurrentUser()).getUid())){
                         recipes_list.add(new Recipe(snapshot.getString("Title"),
                                 snapshot.getString("Summary"),snapshot.getString("Description")));
                     }

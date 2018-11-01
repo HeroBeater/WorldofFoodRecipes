@@ -50,7 +50,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         holder.titleOfReview.setText(review.getTitleOfReview());
         holder.userOfReview.setText(review.getUsernameOfReview());
         holder.descriptionOfReview.setText(review.getDescriptionOfReview());
-        holder.ratingBarOfReview.setNumStars(review.getRating());
+        holder.ratingBarOfReview.setRating(review.getRating());
     }
 
     //size of list

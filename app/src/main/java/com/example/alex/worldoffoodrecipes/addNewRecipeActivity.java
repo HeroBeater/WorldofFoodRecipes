@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,11 +108,15 @@ public class addNewRecipeActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String recipe_ID = title.getText().toString()+Calendar.getInstance().getTime().toString();
                 Map<String, Object> map = new HashMap<>();
                 map.put("Title", title.getText().toString());
                 map.put("Summary", summary.getText().toString());
                 map.put("Description", description.getText().toString());
-                map.put("Author",mAuth.getCurrentUser().getUid());
+                map.put("Author_of_recipe",mAuth.getCurrentUser().getUid());
+                map.put("Recipe_ID",recipe_ID);
+                map.put("Total_ratings",0);
+                map.put("Number_of_reviews",0);
                 map.put("Average_rating",0);
                 if (switchPublic.isChecked()){
                     map.put("Public","yes");
@@ -120,7 +125,8 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 }
 
                 final String pathName = mAuth.getCurrentUser().getUid()+title.getText().toString();
-                db.collection("All Recipes").document().set(map)
+
+                db.collection("All Recipes").document(recipe_ID).set(map)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

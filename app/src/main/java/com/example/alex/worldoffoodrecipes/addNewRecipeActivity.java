@@ -12,9 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,13 +39,16 @@ public class addNewRecipeActivity extends AppCompatActivity {
     private EditText title, summary, description;
     private Switch switchPublic;
     private ImageView imageRecipe;
+    private VideoView videoRecipe;
+    private MediaController mediaControls;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageReference;
 
-    private Uri filePath;
+    private Uri filePathImage, filePathVideo;
     private final int PICK_IMAGE_REQUEST = 71;
+    private Boolean choosedImage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,10 @@ public class addNewRecipeActivity extends AppCompatActivity {
         Button videoButton = findViewById(R.id.buttonVideo);
         imageRecipe = findViewById(R.id.imageRecipe);
         switchPublic = findViewById(R.id.switchPublic);
+
+        if (mediaControls == null) {
+            mediaControls = new MediaController(this);
+        }
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -88,6 +97,13 @@ public class addNewRecipeActivity extends AppCompatActivity {
             }
         });
 
+        videoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseVideo();
+            }
+        });
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +112,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 map.put("Summary", summary.getText().toString());
                 map.put("Description", description.getText().toString());
                 map.put("Author",mAuth.getCurrentUser().getUid());
+                map.put("Average_rating",0);
                 if (switchPublic.isChecked()){
                     map.put("Public","yes");
                 }else{
@@ -108,6 +125,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 uploadImage(pathName);
+                                uploadVideo(pathName);
                                 Toast.makeText(getApplicationContext(), "Recipe saved", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(addNewRecipeActivity.this, myRecipesActivity.class);
                                 startActivity(intent);
@@ -126,10 +144,18 @@ public class addNewRecipeActivity extends AppCompatActivity {
     }
 
     private void chooseImage(){
+        choosedImage = true;
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    private void chooseVideo(){
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_IMAGE_REQUEST);
     }
 
     @Override
@@ -137,29 +163,75 @@ public class addNewRecipeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null )
         {
-            filePath = data.getData();
-            Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                imageRecipe.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
+            if(choosedImage){
+                filePathImage = data.getData();
+                Toast.makeText(getApplicationContext(), "Selected!"+filePathImage, Toast.LENGTH_LONG).show();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePathImage);
+                    imageRecipe.setImageBitmap(bitmap);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }else{
+                filePathVideo = data.getData();
+                Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
+                try {
+                    videoRecipe.setVideoURI(filePathVideo);
+                    videoRecipe.start();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     private void uploadImage(String RecipeID) {
 
-        if(filePath != null)
+        if(filePathImage != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
             StorageReference ref = storageReference.child("images/"+ RecipeID);
-            ref.putFile(filePath)
+            ref.putFile(filePathImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(addNewRecipeActivity.this, "Uploaded!", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(addNewRecipeActivity.this, "Failed to upload!"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        }
+                    });
+        }
+    }
+
+    private void uploadVideo(String RecipeID) {
+        if(filePathVideo != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("videos/"+ RecipeID);
+            ref.putFile(filePathVideo)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

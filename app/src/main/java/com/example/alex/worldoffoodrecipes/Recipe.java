@@ -6,7 +6,6 @@ public class Recipe {
     private String Name;
     private String Summary;
     private String Description;
-    private ArrayList<Review> review_list = new ArrayList<>();
     private Double rating_average;
     private ArrayList<String> images = new ArrayList<>();
     private ArrayList<String> videos = new ArrayList<>();
@@ -21,15 +20,12 @@ public class Recipe {
         Description = description;
     }
 
-    public Recipe(String name, String summary, String description, ArrayList<Review> review_list,
-                  Double rating_average, ArrayList<String> images, ArrayList<String> videos) {
+    public Recipe(String name, String summary, String description, Double rating_average, ArrayList<String> images) {
         Name = name;
         Summary = summary;
         Description = description;
-        this.review_list = review_list;
         this.rating_average = rating_average;
         this.images = images;
-        this.videos = videos;
     }
 
     public String getName() {
@@ -54,14 +50,6 @@ public class Recipe {
 
     public void setDescription(String description) {
         Description = description;
-    }
-
-    public ArrayList<Review> getReview_list() {
-        return review_list;
-    }
-
-    public void setReview_list(ArrayList<Review> review_list) {
-        this.review_list = review_list;
     }
 
     public Double getRating_average() {

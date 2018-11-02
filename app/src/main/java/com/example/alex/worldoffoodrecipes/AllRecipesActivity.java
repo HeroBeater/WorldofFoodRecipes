@@ -41,7 +41,7 @@ public class AllRecipesActivity extends AppCompatActivity {
                     if (Objects.equals(snapshot.getString("Public"), "yes")){
                         Log.d("allRecipeActivity","query not launched");
                         recipes_list.add(new Recipe(snapshot.getString("Title"),
-                                snapshot.getString("Summary"),snapshot.getString("Description")));
+                                snapshot.getString("Summary"),snapshot.getString("Description"),snapshot.getDouble("Average_rating")));
                     }
                 }
                 mAdapter = new RecipeAdapter(recipes_list,AllRecipesActivity.this);

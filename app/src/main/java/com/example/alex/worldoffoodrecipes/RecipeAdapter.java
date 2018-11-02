@@ -1,5 +1,6 @@
 package com.example.alex.worldoffoodrecipes;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
@@ -19,15 +20,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageView;
-        public TextView textTitel;
+        public TextView textTitle;
         public TextView textDesc;
+        public TextView textRate;
         public ConstraintLayout parentLayout;
 
         public MyViewHolder(View v){
             super(v);
             imageView = v.findViewById(R.id.imageView);
-            textTitel = v.findViewById(R.id.textTitel);
+            textTitle = v.findViewById(R.id.textTitel);
             textDesc = v.findViewById(R.id.textDesc);
+            textRate = v.findViewById(R.id.textViewRate);
             parentLayout = v.findViewById(R.id.recipeLayout);
         }
     }
@@ -50,8 +53,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, final int position){
         Recipe recipe = recipe_list.get(position);
         holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
-        holder.textTitel.setText(recipe.getName());
+        holder.textTitle.setText(recipe.getName());
         holder.textDesc.setText(recipe.getSummary());
+        holder.textRate.setText(String.valueOf(recipe.getRating_average()));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override

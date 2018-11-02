@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,6 +34,7 @@ public class RecipeShowActivity extends AppCompatActivity {
     private Button addReview;
 
     private String recipe_ID_intent;
+    private String user_of_recipe;
 
     private RecyclerView recyclerViewReview;
     private RecyclerView.Adapter mAdapter;
@@ -68,6 +70,7 @@ public class RecipeShowActivity extends AppCompatActivity {
                     if (Objects.equals(snapshot.getString("Title"), getIntent().getStringExtra("recipe_name"))){
                         String recipe_ID = snapshot.getString("Recipe_ID");
                         recipe_ID_intent = recipe_ID;
+                        user_of_recipe = snapshot.getString("Author_of_recipe");
                         if(snapshot.getDouble("Number_of_reviews")!=0){
                             db.collection("All Recipes").document(recipe_ID).update("Average_rating",
                                     ((Math.round(snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews")*10.0))/10.0));
@@ -94,6 +97,15 @@ public class RecipeShowActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (mAuth.getCurrentUser().getUid().equals(user_of_recipe)){
+            addReview.setEnabled(false);
+        }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
 
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -42,18 +42,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/title_of_recipe"
-                android:textSize="28sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/summaryOfRecipe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/summary"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/descriptionOfRecipe"
@@ -61,13 +61,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/description"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewReview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="197dp" />
         </LinearLayout>
     </ScrollView>
 

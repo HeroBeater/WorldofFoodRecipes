@@ -47,10 +47,18 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position){
         Review review = review_list.get(position);
-        holder.titleOfReview.setText(review.getTitleOfReview());
         holder.userOfReview.setText(review.getUsernameOfReview());
-        holder.descriptionOfReview.setText(review.getDescriptionOfReview());
         holder.ratingBarOfReview.setRating(review.getRating());
+        if (review.getTitleOfReview().equals("")){
+            holder.titleOfReview.setHeight(0);
+        }else{
+            holder.titleOfReview.setText(review.getTitleOfReview());
+        }
+        if (review.getDescriptionOfReview().equals("")){
+            holder.descriptionOfReview.setHeight(0);
+        }else{
+            holder.descriptionOfReview.setText(review.getTitleOfReview());
+        }
     }
 
     //size of list

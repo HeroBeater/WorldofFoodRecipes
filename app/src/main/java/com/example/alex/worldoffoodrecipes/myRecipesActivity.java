@@ -64,7 +64,7 @@ public class myRecipesActivity extends AppCompatActivity {
                 for (DocumentSnapshot snapshot : documentSnapshots){
                     if (Objects.equals(snapshot.getString("Author_of_recipe"), Objects.requireNonNull(mAuth.getCurrentUser()).getUid())){
                         recipes_list.add(new Recipe(snapshot.getString("Title"),
-                                snapshot.getString("Summary"),snapshot.getString("Description")));
+                                snapshot.getString("Summary"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
                     }
                 }
                 mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);
@@ -143,7 +143,7 @@ public class myRecipesActivity extends AppCompatActivity {
                         ArrayList<Recipe> recipes_list = new ArrayList<>();
                         for (DocumentSnapshot snapshot : documentSnapshots){
                             recipes_list.add(new Recipe(snapshot.getString("Title"),
-                                    snapshot.getString("Summary"),snapshot.getString("Description")));
+                                    snapshot.getString("Summary"),snapshot.getString("Description"),snapshot.getDouble("Average_rating")));
                         }
                         mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);
                         recyclerView.setAdapter(mAdapter);

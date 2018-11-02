@@ -26,7 +26,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:isIndicator="true"/>
+                android:isIndicator="true"
+                android:stepSize="0.5"
+                style="?android:attr/ratingBarStyle"/>
 
             <ImageView
                 android:id="@+id/mainImageRecipe"

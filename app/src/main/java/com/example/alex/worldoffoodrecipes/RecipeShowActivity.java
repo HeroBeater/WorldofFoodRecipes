@@ -70,7 +70,7 @@ public class RecipeShowActivity extends AppCompatActivity {
                         recipe_ID_intent = recipe_ID;
                         if(snapshot.getDouble("Number_of_reviews")!=0){
                             db.collection("All Recipes").document(recipe_ID).update("Average_rating",
-                                    (float)(snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews")));
+                                    ((Math.round(snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews")*10.0))/10.0));
                         }
                         textTitle.setText(snapshot.getString("Title"));
                         textSum.setText(snapshot.getString("Summary"));

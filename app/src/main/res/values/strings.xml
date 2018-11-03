@@ -30,5 +30,7 @@
     <string name="search_recipe">Search recipe</string>
     <string name="action_favorite">Action favorite</string>
     <string name="favorite">Favorite</string>
+    <string name="images_gallery">Images Gallery</string>
+    <string name="videos_gallery">Videos Gallery</string>
 
 </resources>

@@ -144,6 +144,7 @@ public class myRecipesActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    //not needed for this activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

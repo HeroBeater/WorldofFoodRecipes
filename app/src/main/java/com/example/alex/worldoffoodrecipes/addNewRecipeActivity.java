@@ -1,22 +1,25 @@
 package com.example.alex.worldoffoodrecipes;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.GridView;
 import android.widget.MediaController;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,7 +33,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,9 +44,11 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
     private EditText title, summary, description;
     private Switch switchPublic;
-    private ImageView imageRecipe;
-    private VideoView videoRecipe;
+    private GridView gridViewImages;
+    private ArrayList<Bitmap> images;
     private MediaController mediaControls;
+
+    private ImageAdapter adapt = new ImageAdapter(this);
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -56,6 +63,14 @@ public class addNewRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_recipe);
 
+        Toolbar toolbar = findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
+        assert ab != null;
+        ab.setDisplayHomeAsUpEnabled(true);
+
         title = findViewById(R.id.editTextOfTitleOfRecipe);
         summary = findViewById(R.id.editTextOfSum);
         description = findViewById(R.id.editTextOfDesc);
@@ -63,12 +78,15 @@ public class addNewRecipeActivity extends AppCompatActivity {
         Button addButton = findViewById(R.id.buttonAddNewRecipe);
         Button imageButton = findViewById(R.id.buttonImage);
         Button videoButton = findViewById(R.id.buttonVideo);
-        imageRecipe = findViewById(R.id.imageRecipe);
         switchPublic = findViewById(R.id.switchPublic);
 
-        if (mediaControls == null) {
+        images = new ArrayList<>();
+
+        gridViewImages = findViewById(R.id.grid_view_images);
+
+        /*if (mediaControls == null) {
             mediaControls = new MediaController(this);
-        }
+        }*/
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -78,11 +96,12 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
         db.collection("Users").document(mAuth.getCurrentUser().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onComplete(@NonNull Task< DocumentSnapshot > task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    userField.setText(doc.get("Name").toString());
+                    userField.setText("Created by "+doc.get("Name").toString());
                 }
             }
         })
@@ -147,6 +166,22 @@ public class addNewRecipeActivity extends AppCompatActivity {
             }
         });
 
+        gridViewImages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                // Sending image id to FullScreenActivity
+                Intent i = new Intent(getApplicationContext(), FullImageActivity.class);
+                // passing array index
+                i.putExtra("id", position);
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                adapt.getItem(position).compress(Bitmap.CompressFormat.JPEG, 50, bs);
+                i.putExtra("byteArray", bs.toByteArray());
+                startActivity(i);
+            }
+        });
+
     }
 
     private void chooseImage(){
@@ -174,7 +209,9 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Selected!"+filePathImage, Toast.LENGTH_LONG).show();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePathImage);
-                    imageRecipe.setImageBitmap(bitmap);
+                    images.add(bitmap);
+                    adapt.setmThumbIds(images);
+                    gridViewImages.setAdapter(adapt);
                 }
                 catch (IOException e)
                 {
@@ -184,8 +221,8 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 filePathVideo = data.getData();
                 Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
                 try {
-                    videoRecipe.setVideoURI(filePathVideo);
-                    videoRecipe.start();
+                    //videoRecipe.setVideoURI(filePathVideo);
+                    //videoRecipe.start();
                 }
                 catch (Exception e)
                 {

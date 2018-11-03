@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,7 +31,6 @@ public class RecipeShowActivity extends AppCompatActivity {
     private TextView textTitle, textSum, textDesc;
     private ImageView imageRecipe;
     private RatingBar ratingBar;
-    private Button addReview;
 
     private String recipe_ID_intent;
     private String user_of_recipe;
@@ -48,6 +47,15 @@ public class RecipeShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_show);
 
+        Toolbar toolbar = findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
+
+        assert ab != null;
+        ab.setDisplayHomeAsUpEnabled(true);
+
         recyclerViewReview = findViewById(R.id.recyclerViewReview);
         mLayoutManager = new LinearLayoutManager(this);
         recyclerViewReview.setLayoutManager(mLayoutManager);
@@ -58,7 +66,6 @@ public class RecipeShowActivity extends AppCompatActivity {
         imageRecipe = findViewById(R.id.mainImageRecipe);
         imageRecipe.setImageResource(R.drawable.ic_launcher_foreground);
         ratingBar = findViewById(R.id.ratingBar);
-        addReview = findViewById(R.id.addReview);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -98,22 +105,46 @@ public class RecipeShowActivity extends AppCompatActivity {
             }
         });
 
-        if (mAuth.getCurrentUser().getUid().equals(user_of_recipe)){
-            addReview.setEnabled(false);
-        }
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        menu.getItem(0).setVisible(false);
+        if (!mAuth.getCurrentUser().getUid().equals(user_of_recipe)){
+            menu.getItem(2).setVisible(false);
+            menu.getItem(4).setVisible(false);
+        }else{
+            menu.getItem(1).setVisible(false);
+            menu.getItem(3).setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        addReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.favorite:
+                Toast.makeText(getApplicationContext(),"Favorite Recipe",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.edit_recipe:
+                Toast.makeText(getApplicationContext(),"Edit Recipe",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.add_review:
                 Intent intent = new Intent(RecipeShowActivity.this, addReviewActivity.class);
                 intent.putExtra("ID", recipe_ID_intent);
                 startActivity(intent);
-            }
-        });
+                break;
+            case R.id.delete_recipe:
+                Toast.makeText(getApplicationContext(),"Delete Recipe",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                //unknown error
+        }
+
+        return super.onOptionsItemSelected(item);
     }
+
 }

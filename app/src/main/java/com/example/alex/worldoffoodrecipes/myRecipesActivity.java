@@ -51,6 +51,7 @@ public class myRecipesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -108,6 +109,10 @@ public class myRecipesActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        menu.getItem(1).setVisible(false);
+        menu.getItem(2).setVisible(false);
+        menu.getItem(3).setVisible(false);
+        menu.getItem(4).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -115,11 +120,17 @@ public class myRecipesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
+            case R.id.favorite:
+                Toast.makeText(getApplicationContext(),"Favorite Recipe",Toast.LENGTH_SHORT).show();
+                break;
             case R.id.edit_recipe:
                 Toast.makeText(getApplicationContext(),"Edit Recipe",Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.favorite:
-                Toast.makeText(getApplicationContext(),"Favorite Recipe",Toast.LENGTH_SHORT).show();
+            case R.id.add_review:
+                Toast.makeText(getApplicationContext(),"Add Review",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.delete_recipe:
+                Toast.makeText(getApplicationContext(),"Delete Recipe",Toast.LENGTH_SHORT).show();
                 break;
             default:
                 //unknown error

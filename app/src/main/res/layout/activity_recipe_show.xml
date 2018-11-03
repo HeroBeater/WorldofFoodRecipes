@@ -6,15 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".RecipeShowActivity">
 
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/app_bar">
+    </include>
+
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/addReview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,12 +25,12 @@
 
             <RatingBar
                 android:id="@+id/ratingBar"
+                style="?android:attr/ratingBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:isIndicator="true"
-                android:stepSize="0.5"
-                style="?android:attr/ratingBarStyle"/>
+                android:stepSize="0.5" />
 
             <ImageView
                 android:id="@+id/mainImageRecipe"
@@ -68,17 +70,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewReview"
                 android:layout_width="match_parent"
-                android:layout_height="197dp" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/addReview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Add Review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView3" />
 </android.support.constraint.ConstraintLayout>

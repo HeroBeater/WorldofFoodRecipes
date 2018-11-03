@@ -45,8 +45,6 @@ public class addReviewActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private Float rating;
 
-    private String Recipe_ID = "error";
-
     private FirebaseFirestore db;
 
     @Override
@@ -81,12 +79,6 @@ public class addReviewActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {}
                 });
 
-        if(getIntent().hasExtra("ID")){
-            Recipe_ID = getIntent().getStringExtra("ID");
-        }else{
-            Recipe_ID = "error";
-        }
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,14 +89,14 @@ public class addReviewActivity extends AppCompatActivity {
                 map.put("Author_of_review",userField.getText().toString());
                 map.put("Rating",rating);
 
-                final DocumentReference dbRef = db.collection("All Recipes").document(Recipe_ID);
+                final DocumentReference dbRef = db.collection("All Recipes").document(getIntent().getStringExtra("ID"));
 
                 dbRef.collection("Reviews").document().set(map)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(getApplicationContext(), "Review saved", Toast.LENGTH_LONG).show();
-                                db.collection("All Recipes").whereEqualTo("Recipe_ID", Recipe_ID).get()
+                                db.collection("All Recipes").whereEqualTo("Recipe_ID", getIntent().getStringExtra("ID")).get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -118,7 +110,7 @@ public class addReviewActivity extends AppCompatActivity {
                                                 }
                                             }
                                         });
-                                Intent intent = new Intent(addReviewActivity.this, AllRecipesActivity.class);
+                                Intent intent = new Intent(addReviewActivity.this, AllRecipesActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();
                             }

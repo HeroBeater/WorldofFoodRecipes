@@ -22,15 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity"/>
         <activity
             android:name=".myRecipesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".addNewRecipeActivity" />
-        <activity android:name=".AllRecipesActivity" />
-        <activity android:name=".RecipeShowActivity" />
-        <activity android:name=".addReviewActivity"></activity>
+        <activity android:name=".addNewRecipeActivity"
+            android:parentActivityName=".myRecipesActivity"/>
+        <activity android:name=".AllRecipesActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".RecipeShowActivity"
+            android:parentActivityName=".AllRecipesActivity"/>
+        <activity android:name=".addReviewActivity"
+            android:parentActivityName=".AllRecipesActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +19,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageView;
-        public TextView textTitel;
+        public TextView textTitle;
         public TextView textDesc;
+        public TextView textRate;
         public ConstraintLayout parentLayout;
 
         public MyViewHolder(View v){
             super(v);
             imageView = v.findViewById(R.id.imageView);
-            textTitel = v.findViewById(R.id.textTitel);
+            textTitle = v.findViewById(R.id.textTitel);
             textDesc = v.findViewById(R.id.textDesc);
+            textRate = v.findViewById(R.id.textViewRate);
             parentLayout = v.findViewById(R.id.recipeLayout);
         }
     }
@@ -49,13 +52,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, final int position){
         Recipe recipe = recipe_list.get(position);
         holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
-        holder.textTitel.setText(recipe.getName());
+        holder.textTitle.setText(recipe.getName());
         holder.textDesc.setText(recipe.getSummary());
+        holder.textRate.setText(String.valueOf(recipe.getRating_average()));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, RecipeShowActivity.class);
+                Intent intent = new Intent(context, RecipeShowActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("recipe_name", recipe_list.get(position).getName());
                 context.startActivity(intent);
             }

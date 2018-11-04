@@ -98,13 +98,6 @@
                 android:text="Share with Public"
                 tools:ignore="HardcodedText" />
 
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:background="@android:color/darker_gray" />
-
             <TextView
                 android:id="@+id/images_gallery"
                 android:layout_width="wrap_content"
@@ -116,17 +109,13 @@
 
             <GridView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/grid_view_images"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:columnWidth="90dp"
-                android:gravity="center"
-                android:horizontalSpacing="10dp"
-                android:numColumns="auto_fit"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="10dp"/>
+                android:nestedScrollingEnabled="true"
+                android:numColumns="3"/>
 
             <Button
                 android:id="@+id/buttonImage"

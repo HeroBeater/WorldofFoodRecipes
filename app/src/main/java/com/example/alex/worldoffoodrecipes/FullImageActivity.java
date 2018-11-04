@@ -17,10 +17,6 @@ public class FullImageActivity extends Activity {
         setContentView(R.layout.full_image);
 
         ImageView imageView = findViewById(R.id.full_image_view);
-        Intent i = getIntent();
-
-        // Selected image id
-        int position = i.getExtras().getInt("id");
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(
                 getIntent().getByteArrayExtra("byteArray"), 0, getIntent().getByteArrayExtra("byteArray").length);

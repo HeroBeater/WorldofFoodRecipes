@@ -79,8 +79,12 @@ public class RecipeShowActivity extends AppCompatActivity {
                         recipe_ID_intent = recipe_ID;
                         user_of_recipe = snapshot.getString("Author_of_recipe");
                         if(snapshot.getDouble("Number_of_reviews")!=0){
-                            db.collection("All Recipes").document(recipe_ID).update("Average_rating",
-                                    ((Math.round(snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews")*10.0))/10.0));
+                            double rate = snapshot.getDouble("Total_ratings")/snapshot.getDouble("Number_of_reviews");
+                            if((rate%10)<5){
+                                db.collection("All Recipes").document(recipe_ID).update("Average_rating", (int)(rate));
+                            }else{
+                                db.collection("All Recipes").document(recipe_ID).update("Average_rating", (int)(rate+1));
+                            }
                         }
                         textTitle.setText(snapshot.getString("Title"));
                         textSum.setText(snapshot.getString("Summary"));
@@ -117,7 +121,7 @@ public class RecipeShowActivity extends AppCompatActivity {
             menu.getItem(4).setVisible(false);
         }else{
             menu.getItem(1).setVisible(false);
-            menu.getItem(3).setVisible(false);
+            //menu.getItem(3).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }

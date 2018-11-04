@@ -50,13 +50,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         holder.userOfReview.setText(review.getUsernameOfReview());
         holder.ratingBarOfReview.setRating(review.getRating());
         if (review.getTitleOfReview().equals("")){
-            holder.titleOfReview.setHeight(0);
+            holder.titleOfReview.setVisibility(View.GONE);
+            holder.descriptionOfReview.setVisibility(View.GONE);
         }else{
+            holder.titleOfReview.layout(16,8,16,0);
             holder.titleOfReview.setText(review.getTitleOfReview());
-        }
-        if (review.getDescriptionOfReview().equals("")){
-            holder.descriptionOfReview.setHeight(0);
-        }else{
+            holder.descriptionOfReview.layout(16,12,16,8);
             holder.descriptionOfReview.setText(review.getTitleOfReview());
         }
     }

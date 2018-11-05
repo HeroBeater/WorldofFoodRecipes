@@ -6,21 +6,41 @@ import java.util.Locale;
 
 public class Review {
 
+    private String recipe_ID;
+    private String recipe_user;
     private String usernameOfReview;
     private String titleOfReview;
     private String descriptionOfReview;
     private Float rating;
     private String timestamp;
 
-    public Review(String useernameOfReview, String titleOfReview, String descriptionOfReview, Float rating) {
-        this.usernameOfReview = useernameOfReview;
+    Review(String recipe, String recipe_user, String usernameOfReview, String titleOfReview, String descriptionOfReview, Float rating) {
+        this.recipe_ID = recipe;
+        this.recipe_user = recipe_user;
+        this.usernameOfReview = usernameOfReview;
         this.titleOfReview = titleOfReview;
         this.descriptionOfReview = descriptionOfReview;
         this.rating = rating;
-        timestamp = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());;
+        timestamp = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
     }
 
-    public String getUsernameOfReview() {
+    public String getRecipe_ID() {
+        return recipe_ID;
+    }
+
+    public void setRecipe_ID(String recipe_ID) {
+        this.recipe_ID = recipe_ID;
+    }
+
+    public String getRecipe_user() {
+        return recipe_user;
+    }
+
+    public void setRecipe_user(String recipe_user) {
+        this.recipe_user = recipe_user;
+    }
+
+    String getUsernameOfReview() {
         return usernameOfReview;
     }
 
@@ -44,7 +64,7 @@ public class Review {
         this.descriptionOfReview = descriptionOfReview;
     }
 
-    public Float getRating() {
+    Float getRating() {
         return rating;
     }
 
@@ -52,7 +72,7 @@ public class Review {
         this.rating = rating;
     }
 
-    public String getTimestamp() {
+    String getTimestamp() {
         return timestamp;
     }
 

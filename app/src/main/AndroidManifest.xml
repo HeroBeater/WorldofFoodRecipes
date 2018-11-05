@@ -7,9 +7,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/logo_round"
+        android:label="World of Food"
+        android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
@@ -22,21 +22,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".RegisterActivity"
-            android:parentActivityName=".LoginActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity" />
         <activity
             android:name=".myRecipesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".addNewRecipeActivity"
-            android:parentActivityName=".myRecipesActivity"/>
-        <activity android:name=".AllRecipesActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".RecipeShowActivity"
-            android:parentActivityName=".AllRecipesActivity"/>
-        <activity android:name=".addReviewActivity"
-            android:parentActivityName=".AllRecipesActivity">
-        </activity>
+        <activity
+            android:name=".addNewRecipeActivity"
+            android:parentActivityName=".myRecipesActivity" />
+        <activity
+            android:name=".AllRecipesActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".RecipeShowActivity"
+            android:parentActivityName=".AllRecipesActivity" />
+        <activity
+            android:name=".addReviewActivity"
+            android:parentActivityName=".AllRecipesActivity" />
+        <activity android:name=".FullImageActivity" />
+        <activity android:name=".FavoriteRecipesActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

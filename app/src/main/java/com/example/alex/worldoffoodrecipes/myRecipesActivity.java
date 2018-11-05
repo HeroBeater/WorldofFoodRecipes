@@ -178,12 +178,14 @@ public class myRecipesActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             ArrayList<Recipe> recipes_list = new ArrayList<>();
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (document.getString("Title").toLowerCase().contains(s.toLowerCase()) ||
-                                        document.getString("Summary").toLowerCase().contains(s.toLowerCase()) ||
-                                        document.getString("Description").toLowerCase().contains(s.toLowerCase())) {
-                                    recipes_list.add(new Recipe(document.getString("Title"),
-                                            document.getString("Summary"), document.getString("Description"), document.getDouble("Average_rating")));
+                                if (document.getString("Author_of_recipe").equals(mAuth.getCurrentUser().getUid())){
+                                    if (document.getString("Title").toLowerCase().contains(s.toLowerCase()) ||
+                                            document.getString("Summary").toLowerCase().contains(s.toLowerCase()) ||
+                                            document.getString("Description").toLowerCase().contains(s.toLowerCase())) {
+                                        recipes_list.add(new Recipe(document.getString("Title"),
+                                                document.getString("Summary"), document.getString("Description"), document.getDouble("Average_rating")));
 
+                                    }
                                 }
                             }
                             mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);

@@ -67,8 +67,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, addReviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("recipe_ID", review_list.get(pos).getTimestamp());
-                intent.putExtra("recipe_user", review_list.get(pos).getDescriptionOfReview());
+                intent.putExtra("review_u",review_list.get(pos).getUsernameOfReview());
+                intent.putExtra("ID",review_list.get(pos).getRecipe_ID());
+                intent.putExtra("review_user",review_list.get(pos).getRecipe_user());
                 context.startActivity(intent);
             }
         });

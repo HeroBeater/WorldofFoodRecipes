@@ -52,6 +52,9 @@ public class RecipeShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_show);
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         Toolbar toolbar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
@@ -72,8 +75,7 @@ public class RecipeShowActivity extends AppCompatActivity {
         imageRecipe.setImageResource(R.drawable.ic_launcher_foreground);
         ratingBar = findViewById(R.id.ratingBar);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+
 
         recipe_ID = getIntent().getStringExtra("recipe_ID");
         user_of_recipe = getIntent().getStringExtra("recipe_user");
@@ -86,7 +88,7 @@ public class RecipeShowActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        String recipe_ID = document.getString("Recipe_ID");
+                        final String recipe_ID = document.getString("Recipe_ID");
                         user_of_recipe = document.getString("Author_of_recipe");
                         if(document.getDouble("Number_of_reviews")!=0){
                             double rate = document.getDouble("Total_ratings")/document.getDouble("Number_of_reviews");
@@ -107,7 +109,7 @@ public class RecipeShowActivity extends AppCompatActivity {
                                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                                         ArrayList<Review> review_list = new ArrayList<>();
                                         for (DocumentSnapshot snapshot : documentSnapshots){
-                                            review_list.add(new Review(snapshot.getString("Author_of_review"),snapshot.getString("Title"),
+                                            review_list.add(new Review(recipe_ID, user_of_recipe,snapshot.getString("Author_of_review"),snapshot.getString("Title"),
                                                     snapshot.getString("Description"), Objects.requireNonNull(snapshot.getDouble("Rating")).floatValue()));
                                         }
                                         mAdapter = new ReviewAdapter(review_list,RecipeShowActivity.this);
@@ -122,17 +124,33 @@ public class RecipeShowActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         menu.getItem(0).setVisible(false);
         if (!mAuth.getCurrentUser().getUid().equals(user_of_recipe)){
             menu.getItem(2).setVisible(false);
             menu.getItem(4).setVisible(false);
+            db.collection("All Recipes").document(getIntent().getStringExtra("recipe_ID"))
+                    .collection("Reviews").document(mAuth.getCurrentUser().getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    menu.getItem(3).setVisible(false);
+                                } else {
+                                    menu.getItem(3).setVisible(true);
+                                }
+                            } else {
+                                Log.d("RecipeShow", "get failed with ", task.getException());
+                            }
+                        }
+                    });
         }else{
             menu.getItem(1).setVisible(false);
             menu.getItem(3).setVisible(false);
@@ -208,6 +226,7 @@ public class RecipeShowActivity extends AppCompatActivity {
             case R.id.add_review:
                 Toast.makeText(getApplicationContext(),"Creating review",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(RecipeShowActivity.this, addReviewActivity.class);
+                intent.putExtra("new", "yes");
                 intent.putExtra("ID", recipe_ID);
                 intent.putExtra("recipe_user", user_of_recipe);
                 startActivity(intent);

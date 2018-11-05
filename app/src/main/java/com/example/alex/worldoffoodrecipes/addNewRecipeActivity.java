@@ -48,7 +48,6 @@ public class addNewRecipeActivity extends AppCompatActivity {
     private Switch switchPublic;
     private GridView gridViewImages;
     private ArrayList<Bitmap> images;
-    private MediaController mediaControls;
     private MyAdapter adapt;
     private Date date= new Date();
     private FirebaseAuth mAuth;
@@ -93,10 +92,6 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
         gridViewImages = findViewById(R.id.grid_view_images);
         adapt = new MyAdapter(this);
-
-        /*if (mediaControls == null) {
-            mediaControls = new MediaController(this);
-        }*/
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();

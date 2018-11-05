@@ -3,30 +3,53 @@ package com.example.alex.worldoffoodrecipes;
 import java.util.ArrayList;
 
 public class Recipe {
+    private String ID;
     private String Name;
     private String Summary;
     private String Description;
+    private String Author;
     private Double Average_rating;
     private ArrayList<String> images = new ArrayList<>();
     private ArrayList<String> videos = new ArrayList<>();
 
-    public Recipe(){
-
-    }
-
-    public Recipe(String name, String summary, String description, Double average_rating) {
+    Recipe(String name, String summary, String description, Double average_rating) {
         Name = name;
         Summary = summary;
         Description = description;
         Average_rating = average_rating;
     }
 
-    public Recipe(String name, String summary, String description, ArrayList<String> images) {
+    Recipe(String user, String id, String name, String summary, String description, Double average_rating) {
+        Author = user;
+        ID =id;
         Name = name;
         Summary = summary;
         Description = description;
-        this.Average_rating = 0.0;
-        this.images = images;
+        Average_rating = average_rating;
+    }
+
+    String getAuthor() {
+        return Author;
+    }
+
+    public void setAuthor(String author) {
+        Author = author;
+    }
+
+    String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public Double getAverage_rating() {
+        return Average_rating;
+    }
+
+    public void setAverage_rating(Double average_rating) {
+        Average_rating = average_rating;
     }
 
     public String getName() {
@@ -53,7 +76,7 @@ public class Recipe {
         Description = description;
     }
 
-    public Double getRating_average() {
+    Double getRating_average() {
         return Average_rating;
     }
 

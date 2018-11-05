@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,16 +32,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class AllRecipesActivity extends AppCompatActivity {
+public class FavoriteRecipesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
+    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_recipes);
+        setContentView(R.layout.activity_favorite_recipes);
 
         recyclerView = findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -54,13 +56,14 @@ public class AllRecipesActivity extends AppCompatActivity {
         assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
 
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         updateView();
     }
 
     public void updateView(){
-        db.collection("All Recipes").orderBy("Average_rating", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Users").document(mAuth.getCurrentUser().getUid()).collection("Fav Recipes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 ArrayList<Recipe> recipes_list = new ArrayList<>();
@@ -70,7 +73,7 @@ public class AllRecipesActivity extends AppCompatActivity {
                                 snapshot.getString("Summary"),snapshot.getString("Description"),snapshot.getDouble("Average_rating")));
                     }
                 }
-                mAdapter = new RecipeAdapter(recipes_list,AllRecipesActivity.this);
+                mAdapter = new RecipeAdapter(recipes_list,FavoriteRecipesActivity.this);
                 recyclerView.setAdapter(mAdapter);
             }
         });
@@ -86,11 +89,11 @@ public class AllRecipesActivity extends AppCompatActivity {
         menu.getItem(4).setVisible(false);
 
         MenuItem searchItem = menu.findItem(R.id.search);
-        SearchManager searchManager = (SearchManager) AllRecipesActivity.this.getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) FavoriteRecipesActivity.this.getSystemService(Context.SEARCH_SERVICE);
 
         if (searchItem != null) {
             final SearchView searchView = (SearchView) searchItem.getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(AllRecipesActivity.this.getComponentName()));
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(FavoriteRecipesActivity.this.getComponentName()));
             searchView.setMaxWidth(Integer.MAX_VALUE);
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -153,9 +156,9 @@ public class AllRecipesActivity extends AppCompatActivity {
 
     public void getSearch(final String s){
 
-        mAdapter = new RecipeAdapter(new ArrayList<Recipe>(),AllRecipesActivity.this);
+        mAdapter = new RecipeAdapter(new ArrayList<Recipe>(),FavoriteRecipesActivity.this);
 
-        db.collection("All Recipes").get()
+        db.collection("Users").document(mAuth.getCurrentUser().getUid()).collection("Fav Recipes").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -164,13 +167,13 @@ public class AllRecipesActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if(document.getString("Title").toLowerCase().contains(s.toLowerCase())||
                                         document.getString("Summary").toLowerCase().contains(s.toLowerCase())||
-                                document.getString("Description").toLowerCase().contains(s.toLowerCase())){
+                                        document.getString("Description").toLowerCase().contains(s.toLowerCase())){
                                     recipes_list.add(new Recipe(document.getString("Title"),
                                             document.getString("Summary"),document.getString("Description"),
                                             document.getDouble("Average_rating")));
                                 }
                             }
-                            mAdapter = new RecipeAdapter(recipes_list,AllRecipesActivity.this);
+                            mAdapter = new RecipeAdapter(recipes_list,FavoriteRecipesActivity.this);
                             recyclerView.setAdapter(mAdapter);
                         } else {
                             Log.d("addReviewActivity", "Error", task.getException());

@@ -12,15 +12,15 @@ public class Review {
     private Float rating;
     private String timestamp;
 
-    public Review(String useernameOfReview, String titleOfReview, String descriptionOfReview, Float rating) {
-        this.usernameOfReview = useernameOfReview;
+    Review(String usernameOfReview, String titleOfReview, String descriptionOfReview, Float rating) {
+        this.usernameOfReview = usernameOfReview;
         this.titleOfReview = titleOfReview;
         this.descriptionOfReview = descriptionOfReview;
         this.rating = rating;
-        timestamp = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());;
+        timestamp = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
     }
 
-    public String getUsernameOfReview() {
+    String getUsernameOfReview() {
         return usernameOfReview;
     }
 
@@ -44,7 +44,7 @@ public class Review {
         this.descriptionOfReview = descriptionOfReview;
     }
 
-    public Float getRating() {
+    Float getRating() {
         return rating;
     }
 
@@ -52,7 +52,7 @@ public class Review {
         this.rating = rating;
     }
 
-    public String getTimestamp() {
+    String getTimestamp() {
         return timestamp;
     }
 

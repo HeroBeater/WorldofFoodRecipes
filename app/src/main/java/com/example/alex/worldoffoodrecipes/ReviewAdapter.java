@@ -1,6 +1,8 @@
 package com.example.alex.worldoffoodrecipes;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,9 +20,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView titleOfReview, userOfReview, descriptionOfReview;
         public RatingBar ratingBarOfReview;
-        public ConstraintLayout parentLayout;
+        ConstraintLayout parentLayout;
 
-        public MyViewHolder(View v){
+        MyViewHolder(View v){
             super(v);
             titleOfReview = v.findViewById(R.id.titleOfReview);
             userOfReview = v.findViewById(R.id.userOfReview);
@@ -30,22 +32,22 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         }
     }
 
-    public ReviewAdapter(ArrayList<Review> reviews, Context context){
+    ReviewAdapter(ArrayList<Review> reviews, Context context){
         review_list = reviews;
         this.context = context;
     }
 
     //create new views
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_review_element, parent, false);
-        MyViewHolder vH = new MyViewHolder(v);
-        return vH;
+        return new MyViewHolder(v);
     }
 
     //replace contents of a view
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position){
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position){
         Review review = review_list.get(position);
         holder.userOfReview.setText(review.getUsernameOfReview());
         holder.ratingBarOfReview.setRating(review.getRating());
@@ -58,6 +60,18 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             holder.descriptionOfReview.layout(16,12,16,8);
             holder.descriptionOfReview.setText(review.getTitleOfReview());
         }
+
+        final int pos = position;
+
+        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, addReviewActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("recipe_ID", review_list.get(pos).getTimestamp());
+                intent.putExtra("recipe_user", review_list.get(pos).getDescriptionOfReview());
+                context.startActivity(intent);
+            }
+        });
     }
 
     //size of list

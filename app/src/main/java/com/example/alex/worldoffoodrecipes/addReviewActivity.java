@@ -1,22 +1,18 @@
 package com.example.alex.worldoffoodrecipes;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.RatingBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,19 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 public class addReviewActivity extends AppCompatActivity {
 
@@ -44,7 +32,6 @@ public class addReviewActivity extends AppCompatActivity {
     private TextView userField;
     private RatingBar ratingBar;
     private Float rating;
-
     private FirebaseFirestore db;
 
     @Override
@@ -60,9 +47,6 @@ public class addReviewActivity extends AppCompatActivity {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference();
 
         db.collection("Users").document(mAuth.getCurrentUser().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -104,13 +88,21 @@ public class addReviewActivity extends AppCompatActivity {
                                                     for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                                         dbRef.update("Total_ratings",document.getDouble("Total_ratings")+rating);
                                                         dbRef.update("Number_of_reviews",document.getDouble("Number_of_reviews")+1);
+                                                        double rate = (document.getDouble("Total_ratings")+rating)/(document.getDouble("Number_of_reviews")+1);
+                                                        if((rate%10)<5){
+                                                            dbRef.update("Average_rating", (int)(rate));
+                                                        }else{
+                                                            dbRef.update("Average_rating", (int)(rate+1));
+                                                        }
                                                     }
                                                 } else {
                                                     Log.d("addReviewActivity", "Error", task.getException());
                                                 }
                                             }
                                         });
-                                Intent intent = new Intent(addReviewActivity.this, AllRecipesActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                Intent intent = new Intent(addReviewActivity.this, RecipeShowActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("recipe_ID", getIntent().getStringExtra("ID"));
+                                intent.putExtra("recipe_user", getIntent().getStringExtra("recipe_user"));
                                 startActivity(intent);
                                 finish();
                             }
@@ -123,6 +115,14 @@ public class addReviewActivity extends AppCompatActivity {
                         });
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(addReviewActivity.this, RecipeShowActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("recipe_ID", getIntent().getStringExtra("ID"));
+        intent.putExtra("recipe_user", getIntent().getStringExtra("recipe_user"));
+        startActivity(intent);
+        finish();
     }
 }

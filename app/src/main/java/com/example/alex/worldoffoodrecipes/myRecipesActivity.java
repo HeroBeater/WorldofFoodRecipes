@@ -37,7 +37,6 @@ public class myRecipesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -82,7 +81,7 @@ public class myRecipesActivity extends AppCompatActivity {
                 ArrayList<Recipe> recipes_list = new ArrayList<>();
                 for (DocumentSnapshot snapshot : documentSnapshots){
                     if (Objects.equals(snapshot.getString("Author_of_recipe"), Objects.requireNonNull(mAuth.getCurrentUser()).getUid())){
-                        recipes_list.add(new Recipe(snapshot.getString("Title"),
+                        recipes_list.add(new Recipe(snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"), snapshot.getString("Title"),
                                 snapshot.getString("Summary"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
                     }
                 }

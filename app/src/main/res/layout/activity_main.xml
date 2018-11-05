@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
-        android:layout_gravity="center_vertical">
+        android:background="@color/white"
+        tools:context=".MainActivity">
 
-        <Button
+        <ImageView
             android:id="@+id/myRecipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="My Recipes"
-            tools:ignore="HardcodedText" />
+            tools:src="@mipmap/my_recipes"
+            android:layout_weight="1"
+            tools:ignore="ContentDescription" />
 
-        <Button
+        <ImageView
+            android:id="@+id/favRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:src="@mipmap/favorite_recipes"
+            android:layout_weight="1"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
             android:id="@+id/allRecipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All Recipes"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
+            tools:src="@mipmap/allrecipes"
+            android:layout_weight="1"
+            tools:ignore="ContentDescription" />
 </LinearLayout>

@@ -54,7 +54,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
         Recipe recipe = recipe_list.get(position);
         holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
         holder.textTitle.setText(recipe.getName());
-        holder.textDesc.setText(recipe.getSummary());
+        holder.textDesc.setText(recipe.getKeyWords());
         holder.textRate.setText(String.valueOf(recipe.getRating_average()));
 
         final int pos = position;

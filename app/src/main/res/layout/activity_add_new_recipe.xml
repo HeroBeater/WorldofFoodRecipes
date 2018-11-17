@@ -47,12 +47,12 @@
                 tools:ignore="LabelFor" />
 
             <TextView
-                android:id="@+id/summary"
+                android:id="@+id/key_words"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
-                android:text="@string/summary"
+                android:text="@string/key_words"
                 android:textSize="18sp"/>
 
             <EditText
@@ -142,19 +142,15 @@
                 android:text="@string/videos_gallery"
                 android:textSize="20sp"/>
 
-            <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/grid_view_videos"
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/videoText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:columnWidth="90dp"
-                android:gravity="center"
-                android:horizontalSpacing="10dp"
-                android:numColumns="auto_fit"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="10dp"/>
+                android:layout_gravity="center"
+                android:text=""
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/buttonVideo"
@@ -171,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Createc by USER"
+                android:text="Created by USER"
                 tools:ignore="HardcodedText" />
 
             <Button

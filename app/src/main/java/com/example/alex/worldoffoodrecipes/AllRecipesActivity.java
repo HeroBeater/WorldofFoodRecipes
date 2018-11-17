@@ -67,7 +67,7 @@ public class AllRecipesActivity extends AppCompatActivity {
                 for (DocumentSnapshot snapshot : documentSnapshots){
                     if (Objects.equals(snapshot.getString("Public"), "yes")){
                         recipes_list.add(new Recipe(snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"),snapshot.getString("Title"),
-                                snapshot.getString("Summary"),snapshot.getString("Description"),snapshot.getDouble("Average_rating")));
+                                snapshot.getString("Key_words"),snapshot.getString("Description"),snapshot.getDouble("Average_rating")));
                     }
                 }
                 mAdapter = new RecipeAdapter(recipes_list,AllRecipesActivity.this);
@@ -163,10 +163,9 @@ public class AllRecipesActivity extends AppCompatActivity {
                             ArrayList<Recipe> recipes_list = new ArrayList<>();
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if(document.getString("Title").toLowerCase().contains(s.toLowerCase())||
-                                        document.getString("Summary").toLowerCase().contains(s.toLowerCase())||
-                                document.getString("Description").toLowerCase().contains(s.toLowerCase())){
+                                        document.getString("Key_words").toLowerCase().contains(s.toLowerCase())){
                                     recipes_list.add(new Recipe(document.getString("Title"),
-                                            document.getString("Summary"),document.getString("Description"),
+                                            document.getString("Key_words"),document.getString("Description"),
                                             document.getDouble("Average_rating")));
                                 }
                             }

@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -11,6 +14,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,6 +25,7 @@ import android.widget.MediaController;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,15 +42,20 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class addNewRecipeActivity extends AppCompatActivity {
 
-    private EditText title, summary, description;
+    private EditText title, keyWords, description;
+    private TextView videoText;
     private Switch switchPublic;
     private GridView gridViewImages;
     private ArrayList<Bitmap> images;
@@ -52,13 +63,14 @@ public class addNewRecipeActivity extends AppCompatActivity {
     private Date date= new Date();
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseStorage fs;
     private StorageReference storageReference;
-    private Uri filePathImage, filePathVideo;
-    private ArrayList<Uri> filesPathImages;
-    private ArrayList<Uri> linksToImages;
+    private Uri filePathVideo;
+    private ArrayList<Uri> filesPathImages = new ArrayList<>();
+    private ArrayList<String> linksToImages = new ArrayList<>();
+    private String linkToVideo = "";
     private final int PICK_IMAGE_REQUEST = 71;
     private Boolean chooseImage = false;
-    private ProgressDialog progressDialog;
     private Boolean update = false;
 
     @SuppressLint("SetTextI18n")
@@ -76,25 +88,25 @@ public class addNewRecipeActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         title = findViewById(R.id.editTextOfTitleOfRecipe);
-        summary = findViewById(R.id.editTextOfSum);
+        keyWords = findViewById(R.id.editTextOfSum);
         description = findViewById(R.id.editTextOfDesc);
         final TextView userField = findViewById(R.id.textViewUser);
         Button addButton = findViewById(R.id.buttonAddNewRecipe);
         Button imageButton = findViewById(R.id.buttonImage);
         Button videoButton = findViewById(R.id.buttonVideo);
         switchPublic = findViewById(R.id.switchPublic);
+        videoText = findViewById(R.id.videoText);
 
         images = new ArrayList<>();
         filesPathImages = new ArrayList<>();
         linksToImages = new ArrayList<>();
-
-        progressDialog = new ProgressDialog(this);
 
         gridViewImages = findViewById(R.id.grid_view_images);
         adapt = new MyAdapter(this);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        fs = FirebaseStorage.getInstance();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -117,7 +129,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
         if(getIntent().getExtras()!=null){
             update = true;
-            String r_ID = getIntent().getStringExtra("edit");
+            final String r_ID = getIntent().getStringExtra("edit");
             addButton.setText("Update recipe");
             db.collection("All Recipes").document(r_ID).get()
                     .addOnFailureListener(new OnFailureListener() {
@@ -129,7 +141,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             title.setText(task.getResult().getString("Title"));
-                            summary.setText(task.getResult().getString("Summary"));
+                            keyWords.setText(task.getResult().getString("Key_words"));
                             description.setText(task.getResult().getString("Description"));
                             if (task.getResult().getString("Public").equals("yes")){
                                 switchPublic.setChecked(true);
@@ -139,6 +151,22 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
                             //IMAGES AND VIDEOS NEEDED ALSO
 
+                            linksToImages = (ArrayList<String>)task.getResult().get("Links_Images");
+
+                            if(!linksToImages.isEmpty()){
+                                for (int i=0;i<linksToImages.size();i++){
+                                    StorageReference httpsReference = fs.getReferenceFromUrl(linksToImages.get(i));
+                                    httpsReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                        @Override
+                                        public void onSuccess(byte[] bytes) {
+                                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            images.add(bitmap);
+                                            adapt.setmItems(images);
+                                            gridViewImages.setAdapter(adapt);
+                                        }
+                                    });
+                                }
+                            }
                         }
                     });
         }
@@ -157,6 +185,15 @@ public class addNewRecipeActivity extends AppCompatActivity {
             }
         });
 
+        videoText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(addNewRecipeActivity.this, FullscreenVideoActivity.class);
+                intent.putExtra("path", filePathVideo.toString());
+                startActivity(intent);
+            }
+        });
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,12 +201,17 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     DocumentReference recipe = db.collection("All Recipes").document(getIntent().getStringExtra("edit"));
                     String pub = "no";
                     if (switchPublic.isChecked()){
-                        pub = "yes";
+                             pub = "yes";
                     }
+                    for (int i = 0; i < images.size(); i++) {
+                        uploadImage(getIntent().getStringExtra("edit"),i);
+                    }
+
                     recipe.update("Title", title.getText().toString(),
-                            "Summary", summary.getText().toString(),
+                            "Key_words", keyWords.getText().toString(),
                             "Description", description.getText().toString(),
-                            "Public",pub)
+                            "Public",pub,
+                            "Links_Images",linksToImages)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -190,7 +232,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     final String recipe_ID = title.getText().toString()+String.valueOf(time);
                     Map<String, Object> map = new HashMap<>();
                     map.put("Title", title.getText().toString());
-                    map.put("Summary", summary.getText().toString());
+                    map.put("Key_words", keyWords.getText().toString());
                     map.put("Description", description.getText().toString());
                     map.put("Author_of_recipe",mAuth.getCurrentUser().getUid());
                     map.put("Recipe_ID",recipe_ID);
@@ -202,17 +244,18 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     }else{
                         map.put("Public","no");
                     }
+
                     for (int i = 0; i < images.size(); i++) {
                         uploadImage(recipe_ID,i);
                     }
+
                     map.put("Links_Images",linksToImages);
+                    map.put("Link_Video",linkToVideo);
 
                     db.collection("All Recipes").document(recipe_ID).set(map)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-
-                                    //uploadVideo(pathName);
                                     Toast.makeText(getApplicationContext(), "Recipe saved", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(addNewRecipeActivity.this, myRecipesActivity.class);
                                     startActivity(intent);
@@ -264,14 +307,14 @@ public class addNewRecipeActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_IMAGE_REQUEST);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null )
         {
             if(chooseImage){
-                filePathImage = data.getData();
-                //Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_LONG).show();
+                Uri filePathImage = data.getData();
                 try {
                     filesPathImages.add(filePathImage);
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePathImage);
@@ -285,10 +328,8 @@ public class addNewRecipeActivity extends AppCompatActivity {
                 }
             }else{
                 filePathVideo = data.getData();
-                Toast.makeText(getApplicationContext(), "Selected!", Toast.LENGTH_SHORT).show();
                 try {
-                    //videoRecipe.setVideoURI(filePathVideo);
-                    //videoRecipe.start();
+                    videoText.setText("Video has been selected! (Click to see)");
                 }
                 catch (Exception e)
                 {
@@ -298,78 +339,67 @@ public class addNewRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(String RecipeID, int i) {
+    private void uploadImage(final String RecipeID, final int i) {
 
-        progressDialog.setTitle("Uploading image N°"+String.valueOf(i));
-        progressDialog.show();
-
-        final StorageReference ref = storageReference.child("images/"+ RecipeID+"/"+String.valueOf(i));
+        final StorageReference ref = storageReference.child("images/"+ RecipeID+String.valueOf(i));
 
         ref.putFile(filesPathImages.get(i))
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        progressDialog.dismiss();
                         ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                linksToImages.add(uri);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle any errors
+                                Log.d("Update"+String.valueOf(i),uri.toString());
+                                DocumentReference rd = db.collection("All Recipes").document(RecipeID);
+                                linksToImages.add(uri.toString());
+                                rd.update("Links_Images",linksToImages).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                    }
+                                });
                             }
                         });
-                        Toast.makeText(addNewRecipeActivity.this, "Uploaded!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
                         Toast.makeText(addNewRecipeActivity.this, "Failed to upload!"+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
-                        progressDialog.setMessage("Uploaded "+(int)progress+"%");
                     }
                 });
     }
 
-    private void uploadVideo(String RecipeID) {
+    private void uploadVideo(final String RecipeID) {
         if(filePathVideo != null)
         {
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            StorageReference ref = storageReference.child("videos/"+ RecipeID);
+            final StorageReference ref = storageReference.child("videos/"+ RecipeID);
             ref.putFile(filePathVideo)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(addNewRecipeActivity.this, "Uploaded!", Toast.LENGTH_SHORT).show();
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    DocumentReference rd = db.collection("All Recipes").document(RecipeID);
+                                    linkToVideo = uri.toString();
+                                    rd.update("Link_Video",uri.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                        }
+                                    });
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
                             Toast.makeText(addNewRecipeActivity.this, "Failed to upload!"+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
         }
+
     }
 
 }

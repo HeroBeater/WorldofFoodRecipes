@@ -42,8 +42,10 @@
             android:name=".addReviewActivity"
             android:parentActivityName=".AllRecipesActivity" />
         <activity android:name=".FullImageActivity" />
-        <activity android:name=".FavoriteRecipesActivity"
+        <activity
+            android:name=".FavoriteRecipesActivity"
             android:parentActivityName=".MainActivity" />
+        <activity android:name=".FullscreenVideoActivity"></activity>
     </application>
 
 </manifest>

@@ -82,7 +82,7 @@ public class myRecipesActivity extends AppCompatActivity {
                 for (DocumentSnapshot snapshot : documentSnapshots){
                     if (Objects.equals(snapshot.getString("Author_of_recipe"), Objects.requireNonNull(mAuth.getCurrentUser()).getUid())){
                         recipes_list.add(new Recipe(snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"), snapshot.getString("Title"),
-                                snapshot.getString("Summary"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
+                                snapshot.getString("Key_words"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
                     }
                 }
                 mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);
@@ -180,10 +180,9 @@ public class myRecipesActivity extends AppCompatActivity {
                             for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (document.getString("Author_of_recipe").equals(mAuth.getCurrentUser().getUid())){
                                     if (document.getString("Title").toLowerCase().contains(s.toLowerCase()) ||
-                                            document.getString("Summary").toLowerCase().contains(s.toLowerCase()) ||
-                                            document.getString("Description").toLowerCase().contains(s.toLowerCase())) {
+                                            document.getString("Key_words").toLowerCase().contains(s.toLowerCase())) {
                                         recipes_list.add(new Recipe(document.getString("Title"),
-                                                document.getString("Summary"), document.getString("Description"), document.getDouble("Average_rating")));
+                                                document.getString("Key_words"), document.getString("Description"), document.getDouble("Average_rating")));
 
                                     }
                                 }

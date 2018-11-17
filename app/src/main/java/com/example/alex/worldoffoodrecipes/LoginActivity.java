@@ -29,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mLoginEmail;
     private EditText mLoginPassword;
     private Button mLoginButton, mNewAccount;
-    private ProgressDialog mProgressDialog;
     private FirebaseAuth mAuth;
 
     @Override
@@ -41,8 +40,6 @@ public class LoginActivity extends AppCompatActivity {
         mNewAccount = findViewById(R.id.b_newAccount);
         mLoginEmail = findViewById(R.id.email);
         mLoginPassword = findViewById(R.id.password);
-
-        mProgressDialog = new ProgressDialog(this);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -61,10 +58,6 @@ public class LoginActivity extends AppCompatActivity {
                 String password = mLoginPassword.getText().toString();
 
                 if(!TextUtils.isEmpty(email)&&!TextUtils.isEmpty(password)){
-                    mProgressDialog.setTitle("Logging In");
-                    mProgressDialog.setMessage("Please wait");
-                    mProgressDialog.setCanceledOnTouchOutside(true);
-                    mProgressDialog.show();
                     loginUser(email, md5(password));
                 }else {
                     Toast.makeText(getApplicationContext(), "Some fields are empty!", Toast.LENGTH_SHORT).show();
@@ -76,12 +69,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            mProgressDialog.hide();
                             Intent mainAct = new Intent(LoginActivity.this,MainActivity.class);
                             startActivity(mainAct);
                             finish();
                         }else {
-                            mProgressDialog.hide();
                             Toast.makeText(getApplicationContext(), "Error logging in!", Toast.LENGTH_SHORT).show();
                         }
                     }

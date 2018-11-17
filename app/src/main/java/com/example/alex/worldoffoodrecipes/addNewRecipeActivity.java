@@ -189,6 +189,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(addNewRecipeActivity.this, FullscreenVideoActivity.class);
+                intent.putExtra("what", "no");
                 intent.putExtra("path", filePathVideo.toString());
                 startActivity(intent);
             }
@@ -203,9 +204,9 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     if (switchPublic.isChecked()){
                              pub = "yes";
                     }
-                    for (int i = 0; i < images.size(); i++) {
+                    /*for (int i = 0; i < images.size(); i++) {
                         uploadImage(getIntent().getStringExtra("edit"),i);
-                    }
+                    }*/
 
                     recipe.update("Title", title.getText().toString(),
                             "Key_words", keyWords.getText().toString(),
@@ -248,6 +249,8 @@ public class addNewRecipeActivity extends AppCompatActivity {
                     for (int i = 0; i < images.size(); i++) {
                         uploadImage(recipe_ID,i);
                     }
+
+                    uploadVideo(recipe_ID);
 
                     map.put("Links_Images",linksToImages);
                     map.put("Link_Video",linkToVideo);

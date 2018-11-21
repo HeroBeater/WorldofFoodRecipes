@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -69,6 +68,8 @@ public class addReviewActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         db = FirebaseFirestore.getInstance();
+
+        invalidateOptionsMenu();
 
         db.collection("Users").document(mAuth.getCurrentUser().getUid())
                 .get()
@@ -272,14 +273,28 @@ public class addReviewActivity extends AppCompatActivity {
         menu.getItem(1).setVisible(false);
         menu.getItem(2).setVisible(false);
         menu.getItem(3).setVisible(false);
-        if(getIntent().getStringExtra("review_u")==null){
-            menu.getItem(4).setVisible(false);
-        }else {
-            if(getIntent().getStringExtra("review_u").equals(user))
-                menu.getItem(4).setVisible(true);
-        }
-
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (final Menu menu) {
+        FirebaseFirestore.getInstance().collection("Users")
+                .whereEqualTo("Name",getIntent().getStringExtra("review_u")).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+                                if(mAuth.getCurrentUser().getEmail().equals(documentSnapshot.getString("Email"))){
+                                    menu.getItem(4).setVisible(true);
+                                }else{
+                                    menu.getItem(4).setVisible(false);
+                                }
+                            }
+                        }
+                    }
+                });
+        return true;
     }
 
     @Override

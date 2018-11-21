@@ -2,6 +2,11 @@ package com.example.alex.worldoffoodrecipes;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +19,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,6 +29,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -30,22 +39,31 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class RecipeShowActivity extends AppCompatActivity {
 
     private TextView textTitle, textSum, textDesc;
+    private TextView videoText, videos_gallery;
     private ImageView imageRecipe;
     private RatingBar ratingBar;
     private String recipe_ID;
     private String user_of_recipe;
+    private GridView gridViewImages;
+    private ArrayList<Bitmap> images = new ArrayList<>();
+    private MyAdapter adapt;
     private RecyclerView recyclerViewReview;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseStorage fs;
+    private String videoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +72,7 @@ public class RecipeShowActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        fs = FirebaseStorage.getInstance();
 
         Toolbar toolbar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -68,14 +87,17 @@ public class RecipeShowActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         recyclerViewReview.setLayoutManager(mLayoutManager);
 
+        gridViewImages = findViewById(R.id.grid_view_images);
+        adapt = new MyAdapter(this);
+
         textTitle = findViewById(R.id.titleOfRecipe);
-        textSum = findViewById(R.id.summaryOfRecipe);
+        textSum = findViewById(R.id.keyWordsOfRecipe);
         textDesc = findViewById(R.id.descriptionOfRecipe);
         imageRecipe = findViewById(R.id.mainImageRecipe);
         imageRecipe.setImageResource(R.drawable.ic_launcher_foreground);
         ratingBar = findViewById(R.id.ratingBar);
-
-
+        videoText = findViewById(R.id.videoText);
+        videos_gallery = findViewById(R.id.videos_gallery);
 
         recipe_ID = getIntent().getStringExtra("recipe_ID");
         user_of_recipe = getIntent().getStringExtra("recipe_user");
@@ -99,9 +121,44 @@ public class RecipeShowActivity extends AppCompatActivity {
                             }
                         }
                         textTitle.setText(document.getString("Title"));
-                        textSum.setText(document.getString("Summary"));
+                        textSum.setText(document.getString("Key_words"));
                         textDesc.setText(document.getString("Description"));
                         ratingBar.setRating(document.getLong("Average_rating"));
+
+                        ArrayList<String> imL = (ArrayList<String>)document.get("Links_Images");
+
+                        if(!imL.isEmpty()){
+                            StorageReference httpsReference = fs.getReferenceFromUrl(imL.get(0));
+                            httpsReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    imageRecipe.setImageBitmap(bitmap);
+                                }
+                            });
+
+                            for (int i=0;i<imL.size();i++){
+                                httpsReference = fs.getReferenceFromUrl(imL.get(i));
+                                httpsReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        images.add(bitmap);
+                                        adapt.setmItems(images);
+                                        gridViewImages.setAdapter(adapt);
+                                    }
+                                });
+                            }
+                        }
+
+
+                        if (document.getString("Link_Video") == ""){
+                            videos_gallery.setVisibility(View.GONE);
+                        }else {
+                            videoText.setText("Click to see the video!");
+                            videoPath = document.getString("Link_Video");
+                        }
+
 
                         db.collection("All Recipes").document(recipe_ID).collection("Reviews").orderBy("Rating", Query.Direction.DESCENDING)
                                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -122,6 +179,54 @@ public class RecipeShowActivity extends AppCompatActivity {
                 } else {
                     Log.d("RecipeShow", "get failed with ", task.getException());
                 }
+            }
+        });
+
+        imageRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent i = new Intent(getApplicationContext(), FullImageActivity.class);
+                    imageRecipe.invalidate();
+                    BitmapDrawable drawable = (BitmapDrawable) imageRecipe.getDrawable();
+                    Bitmap bitmap = drawable.getBitmap();
+                    ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 20, bs);
+                    i.putExtra("byteArray", bs.toByteArray());
+                    startActivity(i);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        gridViewImages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                try {
+                    Intent i = new Intent(getApplicationContext(), FullImageActivity.class);
+                    ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                    Bitmap selectImage = adapt.getItem(position);
+                    selectImage.compress(Bitmap.CompressFormat.JPEG, 20, bs);
+                    i.putExtra("byteArray", bs.toByteArray());
+                    startActivity(i);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        videoText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecipeShowActivity.this, FullscreenVideoActivity.class);
+                intent.putExtra("what", "yes");
+                intent.putExtra("pathURL", videoPath);
+                startActivity(intent);
             }
         });
     }

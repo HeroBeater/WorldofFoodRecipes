@@ -52,9 +52,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position){
         Recipe recipe = recipe_list.get(position);
-        holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
+
+        if(recipe.getMainImage()==null){
+            holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
+        }else{
+            holder.imageView.setImageBitmap(recipe.getMainImage());
+        }
+
         holder.textTitle.setText(recipe.getName());
-        holder.textDesc.setText(recipe.getSummary());
+        holder.textDesc.setText(recipe.getKeyWords());
         holder.textRate.setText(String.valueOf(recipe.getRating_average()));
 
         final int pos = position;
@@ -75,4 +81,5 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     public int getItemCount(){
         return recipe_list.size();
     }
+    
 }

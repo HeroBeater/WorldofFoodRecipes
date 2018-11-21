@@ -1,29 +1,42 @@
 package com.example.alex.worldoffoodrecipes;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 public class Recipe {
     private String ID;
     private String Name;
-    private String Summary;
+    private String KeyWords;
     private String Description;
     private String Author;
     private Double Average_rating;
     private ArrayList<String> images = new ArrayList<>();
     private ArrayList<String> videos = new ArrayList<>();
+    private Bitmap MainImage = null;
 
-    Recipe(String name, String summary, String description, Double average_rating) {
+    Recipe(String name, String keyWords, String description, Double average_rating) {
         Name = name;
-        Summary = summary;
+        KeyWords = keyWords;
         Description = description;
         Average_rating = average_rating;
     }
 
-    Recipe(String user, String id, String name, String summary, String description, Double average_rating) {
+    Recipe(String user, String id, String name, String keyWords, String description, Double average_rating) {
         Author = user;
         ID =id;
         Name = name;
-        Summary = summary;
+        KeyWords = keyWords;
+        Description = description;
+        Average_rating = average_rating;
+    }
+
+    Recipe(Bitmap mainImage, String user, String id, String name, String keyWords, String description, Double average_rating) {
+        MainImage = mainImage;
+        Author = user;
+        ID =id;
+        Name = name;
+        KeyWords = keyWords;
         Description = description;
         Average_rating = average_rating;
     }
@@ -60,12 +73,12 @@ public class Recipe {
         Name = name;
     }
 
-    public String getSummary() {
-        return Summary;
+    public String getKeyWords() {
+        return KeyWords;
     }
 
-    public void setSummary(String summary) {
-        Summary = summary;
+    public void setKeyWords(String KeyWords) {
+        KeyWords = KeyWords;
     }
 
     public String getDescription() {
@@ -98,5 +111,13 @@ public class Recipe {
 
     public void setVideos(ArrayList<String> videos) {
         this.videos = videos;
+    }
+
+    public Bitmap getMainImage() {
+        return MainImage;
+    }
+
+    public void setMainImage(Bitmap mainImage) {
+        MainImage = mainImage;
     }
 }

@@ -32,5 +32,6 @@
     <string name="favorite">Favorite</string>
     <string name="images_gallery">Images Gallery</string>
     <string name="videos_gallery">Videos Gallery</string>
+    <string name="key_words">Key words</string>
 
 </resources>

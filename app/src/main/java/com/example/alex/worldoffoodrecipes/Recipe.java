@@ -1,5 +1,7 @@
 package com.example.alex.worldoffoodrecipes;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 public class Recipe {
@@ -11,6 +13,7 @@ public class Recipe {
     private Double Average_rating;
     private ArrayList<String> images = new ArrayList<>();
     private ArrayList<String> videos = new ArrayList<>();
+    private Bitmap MainImage = null;
 
     Recipe(String name, String keyWords, String description, Double average_rating) {
         Name = name;
@@ -20,6 +23,16 @@ public class Recipe {
     }
 
     Recipe(String user, String id, String name, String keyWords, String description, Double average_rating) {
+        Author = user;
+        ID =id;
+        Name = name;
+        KeyWords = keyWords;
+        Description = description;
+        Average_rating = average_rating;
+    }
+
+    Recipe(Bitmap mainImage, String user, String id, String name, String keyWords, String description, Double average_rating) {
+        MainImage = mainImage;
         Author = user;
         ID =id;
         Name = name;
@@ -98,5 +111,13 @@ public class Recipe {
 
     public void setVideos(ArrayList<String> videos) {
         this.videos = videos;
+    }
+
+    public Bitmap getMainImage() {
+        return MainImage;
+    }
+
+    public void setMainImage(Bitmap mainImage) {
+        MainImage = mainImage;
     }
 }

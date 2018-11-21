@@ -3,6 +3,8 @@ package com.example.alex.worldoffoodrecipes;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,6 +32,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -39,6 +44,8 @@ public class myRecipesActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseStorage fs;
+    private ArrayList<Recipe> recipes_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,7 @@ public class myRecipesActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        fs = FirebaseStorage.getInstance();
 
         updateView();
 
@@ -75,18 +83,35 @@ public class myRecipesActivity extends AppCompatActivity {
     }
 
     public void updateView(){
+        recipes_list = new ArrayList<>();
         db.collection("All Recipes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                ArrayList<Recipe> recipes_list = new ArrayList<>();
-                for (DocumentSnapshot snapshot : documentSnapshots){
+                for (final DocumentSnapshot snapshot : documentSnapshots){
                     if (Objects.equals(snapshot.getString("Author_of_recipe"), Objects.requireNonNull(mAuth.getCurrentUser()).getUid())){
-                        recipes_list.add(new Recipe(snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"), snapshot.getString("Title"),
-                                snapshot.getString("Key_words"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
+                        ArrayList<String> imL = (ArrayList<String>)snapshot.get("Links_Images");
+                        if(!imL.isEmpty()) {
+                            StorageReference httpsReference = fs.getReferenceFromUrl(imL.get(0));
+                            httpsReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    recipes_list.add(new Recipe(bitmap, snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"), snapshot.getString("Title"),
+                                            snapshot.getString("Key_words"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
+                                    if(mAdapter!=null)mAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }else{
+                            recipes_list.add(new Recipe(snapshot.getString("Author_of_recipe"), snapshot.getString("Recipe_ID"), snapshot.getString("Title"),
+                                    snapshot.getString("Key_words"),snapshot.getString("Description"), snapshot.getDouble("Average_rating")));
+                            if(mAdapter!=null)mAdapter.notifyDataSetChanged();
+                        }
+
                     }
                 }
                 mAdapter = new RecipeAdapter(recipes_list,myRecipesActivity.this);
                 recyclerView.setAdapter(mAdapter);
+                if(mAdapter!=null)mAdapter.notifyDataSetChanged();
             }
         });
     }

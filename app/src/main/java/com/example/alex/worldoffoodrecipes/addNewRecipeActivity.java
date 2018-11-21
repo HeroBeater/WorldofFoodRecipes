@@ -1,12 +1,9 @@
 package com.example.alex.worldoffoodrecipes;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -15,17 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.MediaController;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,20 +30,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class addNewRecipeActivity extends AppCompatActivity {
@@ -69,8 +57,8 @@ public class addNewRecipeActivity extends AppCompatActivity {
     private ArrayList<Uri> filesPathImages = new ArrayList<>();
     private ArrayList<String> linksToImages = new ArrayList<>();
     private String linkToVideo = "";
-    private final int PICK_IMAGE_REQUEST = 71;
-    private Boolean chooseImage = false;
+    private final int PICK_IMAGE_REQUEST = 1;
+    private final int PICK_VIDEO_REQUEST = 2;
     private Boolean update = false;
 
     @SuppressLint("SetTextI18n")
@@ -296,7 +284,6 @@ public class addNewRecipeActivity extends AppCompatActivity {
     }
 
     private void chooseImage(){
-        chooseImage = true;
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -307,7 +294,7 @@ public class addNewRecipeActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("video/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST);
     }
 
     @SuppressLint("SetTextI18n")
@@ -316,28 +303,29 @@ public class addNewRecipeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null )
         {
-            if(chooseImage){
-                Uri filePathImage = data.getData();
-                try {
-                    filesPathImages.add(filePathImage);
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePathImage);
-                    images.add(bitmap);
-                    adapt.setmItems(images);
-                    gridViewImages.setAdapter(adapt);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }else{
-                filePathVideo = data.getData();
-                try {
-                    videoText.setText("Video has been selected! (Click to see)");
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+            Uri filePathImage = data.getData();
+            try {
+                filesPathImages.add(filePathImage);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePathImage);
+                images.add(bitmap);
+                adapt.setmItems(images);
+                gridViewImages.setAdapter(adapt);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        if(requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null )
+        {
+            filePathVideo = data.getData();
+            try {
+                videoText.setText("Video has been selected! (Click to see)");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         }
     }
@@ -346,7 +334,19 @@ public class addNewRecipeActivity extends AppCompatActivity {
 
         final StorageReference ref = storageReference.child("images/"+ RecipeID+String.valueOf(i));
 
-        ref.putFile(filesPathImages.get(i))
+        Bitmap m = images.get(i);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int countBytes = m.getByteCount();
+        if(countBytes>60000000){
+            m.compress(Bitmap.CompressFormat.JPEG, 15, baos);
+        }else if(countBytes>30000000){
+            m.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+        }else {
+            m.compress(Bitmap.CompressFormat.JPEG, 35, baos);
+        }
+        byte[] data = baos.toByteArray();
+
+        ref.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

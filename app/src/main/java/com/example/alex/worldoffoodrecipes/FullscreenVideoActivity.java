@@ -68,7 +68,5 @@ public class FullscreenVideoActivity extends AppCompatActivity {
         }
     }
 
-    public void onBackPressed() {
 
-    }
 }

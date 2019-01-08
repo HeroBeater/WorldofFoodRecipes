@@ -34,4 +34,10 @@
     <string name="videos_gallery">Videos Gallery</string>
     <string name="key_words">Key words</string>
 
+    <string name="input_placeholder">Write a message</string>
+    <string name="placeholder_message">Placeholder message</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="other_user">Other User</string>
+    <string name="test_text_from_other_user">Test text from other user.</string>
+
 </resources>

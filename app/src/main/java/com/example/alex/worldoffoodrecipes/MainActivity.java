@@ -2,6 +2,7 @@ package com.example.alex.worldoffoodrecipes;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView myRec = findViewById(R.id.myRecipes);
         ImageView allRec = findViewById(R.id.allRecipes);
         ImageView favRec = findViewById(R.id.favRecipes);
+        FloatingActionButton chatButton = findViewById(R.id.chatButton);
 
         myRec.setImageResource(R.mipmap.my_recipes);
         allRec.setImageResource(R.mipmap.allrecipes);
@@ -44,6 +46,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent goToMyRecipes   = new Intent(MainActivity.this, FavoriteRecipesActivity.class);
                 startActivity(goToMyRecipes);
+            }
+        });
+
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Global Chat Room")
+                        .setMessage("Are you sure you want to enter the Chat room?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent goToMyRecipes   = new Intent(MainActivity.this, GlobalRoom.class);
+                                startActivity(goToMyRecipes);
+                            }
+                        })
+                        .setNegativeButton("Maybe later", null)
+                        .show();
             }
         });
 

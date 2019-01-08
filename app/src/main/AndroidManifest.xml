@@ -45,7 +45,15 @@
         <activity
             android:name=".FavoriteRecipesActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".FullscreenVideoActivity"></activity>
+        <activity android:name=".FullscreenVideoActivity" />
+
+        <activity
+            android:name=".GlobalRoom"
+            android:parentActivityName=".MainActivity" />
+
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
     </application>
 
 </manifest>
